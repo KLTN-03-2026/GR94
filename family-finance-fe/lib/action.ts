@@ -3,6 +3,12 @@
 import { cookies } from "next/headers";
 import { sendRequestServer } from "./api";
 
+import {
+  ICategory,
+  CreateCategoryDto,
+  UpdateCategoryDto,
+} from "./category.api";
+
 const BE = process.env.NEXT_PUBLIC_BE_URL ?? "http://localhost:8081/api/";
 
 //  Helper lấy token phía server
@@ -99,7 +105,7 @@ export const updateProfileAction = async (data: {
 export const logoutAction = async (): Promise<void> => {
   (await cookies()).delete("token");
 };
-//  Tạo phòng 
+//  Tạo phòng
 // BE trả access_token mới có spaceId+role=parent
 // Set cookie ngay → FE không cần login lại
 export const createSpaceAction = async (name: string): Promise<IBackendRes> => {
@@ -114,7 +120,7 @@ export const createSpaceAction = async (name: string): Promise<IBackendRes> => {
   return res;
 };
 
-//  Vào phòng bằng mã mời 
+//  Vào phòng bằng mã mời
 // BE trả access_token mới có spaceId+role=member
 export const joinSpaceAction = async (
   invitedCode: string,
@@ -130,7 +136,7 @@ export const joinSpaceAction = async (
   return res;
 };
 
-//  Lấy thông tin phòng 
+//  Lấy thông tin phòng
 export const getMySpaceAction = async (): Promise<IBackendRes> => {
   return sendRequestServer<IBackendRes>({
     url: `${BE}/space/me`,
@@ -142,7 +148,7 @@ export const getMySpaceAction = async (): Promise<IBackendRes> => {
 // Lấy danh sách người dùng (Admin)
 export const getUsersAdminAction = async (): Promise<IBackendRes> => {
   return sendRequestServer<IBackendRes>({
-    url: `${BE}/users`, 
+    url: `${BE}/users`,
     method: "GET",
     token: await getToken(),
   });
@@ -158,7 +164,9 @@ export const getSystemCategoriesAction = async (): Promise<IBackendRes> => {
 };
 
 // Tạo danh mục hệ thống (Admin)
-export const createSystemCategoryAction = async (data: any): Promise<IBackendRes> => {
+export const createSystemCategoryAction = async (
+  data: any,
+): Promise<IBackendRes> => {
   return sendRequestServer<IBackendRes>({
     url: `${BE}/categoris/system`,
     method: "POST",
@@ -168,7 +176,9 @@ export const createSystemCategoryAction = async (data: any): Promise<IBackendRes
 };
 
 // Xóa danh mục hệ thống (Admin)
-export const deleteSystemCategoryAction = async (id: string): Promise<IBackendRes> => {
+export const deleteSystemCategoryAction = async (
+  id: string,
+): Promise<IBackendRes> => {
   return sendRequestServer<IBackendRes>({
     url: `${BE}/categoris/system/${id}`,
     method: "DELETE",
@@ -176,3 +186,71 @@ export const deleteSystemCategoryAction = async (id: string): Promise<IBackendRe
   });
 };
 
+// ... (các API Category dành cho User)
+
+// Lấy danh sách danh mục (User)
+export const getCategoriesAction = async (): Promise<
+  ICategory[] | { error: string; message: string }
+> => {
+  try {
+    const data = await sendRequestServer<
+      ICategory[] | { error: string; message: string }
+    >({
+      url: `${BE}/categoris`,
+      method: "GET",
+      token: await getToken(),
+    });
+    return data;
+  } catch (error: any) {
+    return { error: "FetchError", message: error.message || "Failed to fetch" };
+  }
+};
+
+// Thêm danh mục mới (User)
+export const createCategoryAction = async (
+  data: CreateCategoryDto,
+): Promise<ICategory> => {
+  try {
+    const result = await sendRequestServer<ICategory>({
+      url: `${BE}/categoris`,
+      method: "POST",
+      body: data,
+      token: await getToken(),
+    });
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message || "Lỗi tạo danh mục");
+  }
+};
+
+// Sửa danh mục (User)
+export const updateCategoryAction = async (
+  id: string,
+  data: UpdateCategoryDto,
+): Promise<ICategory> => {
+  try {
+    const result = await sendRequestServer<ICategory>({
+      url: `${BE}/categoris/${id}`,
+      method: "PATCH",
+      body: data,
+      token: await getToken(),
+    });
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message || "Lỗi cập nhật danh mục");
+  }
+};
+
+// Xoá danh mục (User)
+export const deleteCategoryAction = async (id: string): Promise<any> => {
+  try {
+    const result = await sendRequestServer<any>({
+      url: `${BE}/categoris/${id}`,
+      method: "DELETE",
+      token: await getToken(),
+    });
+    return result;
+  } catch (error: any) {
+    throw new Error(error.message || "Lỗi xóa danh mục");
+  }
+};

@@ -12,6 +12,7 @@ import { CategorisService } from './categoris.service';
 import { CreateCategorisDto } from './dto/create-categoris.dto';
 import { UpdateCategorisDto } from './dto/update-categoris.dto';
 import { AdminGuard } from '@/guards/admin.guard';
+import { GetUser } from '@/decorator/get-user.decorator';
 
 @Controller('categoris')
 export class CategorisController {
@@ -43,5 +44,30 @@ export class CategorisController {
   @UseGuards(AdminGuard)
   deleteSystemCategory(@Param('id') id: string) {
     return this.categorisService.removeSystemCategoris(id);
+  }
+
+  // --- USER ENDPOINTS ---
+
+  @Post()
+  createUserCategory(
+    @Body() dto: CreateCategorisDto,
+    @GetUser('spaceId') spaceId: string,
+  ) {
+    return this.categorisService.createUserCategoris(dto, spaceId);
+  }
+
+  @Get()
+  getUserCategories(@GetUser('spaceId') spaceId: string) {
+    return this.categorisService.getCategoriesForSpace(spaceId);
+  }
+
+  @Patch(':id')
+  updateUserCategory(@Param('id') id: string, @Body() dto: UpdateCategorisDto) {
+    return this.categorisService.updateUserCategoris(id, dto);
+  }
+
+  @Delete(':id')
+  deleteUserCategory(@Param('id') id: string) {
+    return this.categorisService.removeUserCategoris(id);
   }
 }

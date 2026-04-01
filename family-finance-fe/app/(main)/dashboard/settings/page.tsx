@@ -107,14 +107,14 @@ const SettingsPage = () => {
             Không gian Gia đình
           </h3>
           <div className="bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-sm">
-            <SettingRow icon={<UsersThree size={20} />} title="Nhóm danh mục" />
-
-            <div className="md:hidden block">
-              <div className="h-px bg-slate-100 dark:bg-slate-800/60 ml-12" />
+            <div
+              onClick={() => {
+                router.push("/dashboard/settings/categories");
+              }}
+            >
               <SettingRow
-                icon={<Users size={20} />}
-                title="Quản lý thành viên"
-                value="3 người"
+                icon={<UsersThree size={20} />}
+                title="Nhóm danh mục"
               />
             </div>
 
