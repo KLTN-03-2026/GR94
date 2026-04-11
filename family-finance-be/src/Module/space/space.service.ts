@@ -250,7 +250,6 @@ export class SpaceService {
       { _id: memberId },
       { spaceId: null, role: null },
     );
-
     return { message: 'Đã xóa thành viên khỏi phòng' };
   }
 }

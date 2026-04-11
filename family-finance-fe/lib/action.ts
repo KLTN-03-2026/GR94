@@ -8,6 +8,7 @@ import {
   CreateCategoryDto,
   UpdateCategoryDto,
 } from "./category.api";
+import { IBackendRes, IIncome, GetIncomeDto, CreateIncomeDto, IExpense, GetExpenseDto, CreateExpenseDto } from "@/types";
 
 const BE = process.env.NEXT_PUBLIC_BE_URL ?? "http://localhost:8081/api/";
 
@@ -252,5 +253,228 @@ export const deleteCategoryAction = async (id: string): Promise<any> => {
     return result;
   } catch (error: any) {
     throw new Error(error.message || "Lỗi xóa danh mục");
+  }
+};
+
+// --- Giao dịch (Income) ---
+
+// Lấy danh sách giao dịch thu nhập
+export const getIncomesAction = async (
+  query: GetIncomeDto,
+): Promise<IBackendRes<{ result: IIncome[]; meta: any }>> => {
+  try {
+    console.log(`[Action] Fetching incomes from: ${BE}/incomes`);
+    const res = await sendRequestServer<any>({
+      url: `${BE}/incomes`,
+      method: "GET",
+      token: await getToken(),
+      queryParams: query,
+    });
+    // Trả về data wrap để đồng nhất với IBackendRes
+    return {
+        statusCode: 200,
+        message: "Success",
+        data: res // res contains { result, meta }
+    };
+  } catch (error: any) {
+    console.error("[Action Error] getIncomesAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi lấy danh sách giao dịch",
+      data: { result: [], meta: {} },
+    };
+  }
+};
+
+// Tạo giao dịch thu nhập mới
+export const createIncomeAction = async (
+  data: CreateIncomeDto,
+): Promise<IBackendRes<IIncome>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<IIncome>>({
+      url: `${BE}/incomes`,
+      method: "POST",
+      token: await getToken(),
+      body: data,
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] createIncomeAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi tạo giao dịch",
+    };
+  }
+};
+
+// Cập nhật giao dịch thu nhập
+export const updateIncomeAction = async (
+  id: string,
+  data: Partial<CreateIncomeDto>,
+): Promise<IBackendRes<IIncome>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<IIncome>>({
+      url: `${BE}/incomes/${id}`,
+      method: "PATCH",
+      token: await getToken(),
+      body: data,
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] updateIncomeAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi cập nhật giao dịch",
+    };
+  }
+};
+
+// Xoá giao dịch thu nhập
+export const deleteIncomeAction = async (id: string): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<any>>({
+      url: `${BE}/incomes/${id}`,
+      method: "DELETE",
+      token: await getToken(),
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] deleteIncomeAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi xóa giao dịch",
+    };
+  }
+};
+
+// --- Giao dịch (Expense) ---
+
+// Lấy danh sách giao dịch chi phí
+export const getExpensesAction = async (
+  query: GetExpenseDto,
+): Promise<IBackendRes<{ result: IExpense[]; meta: any }>> => {
+  try {
+    console.log(`[Action] Fetching expenses from: ${BE}/expenses`);
+    const res = await sendRequestServer<any>({
+      url: `${BE}/expenses`,
+      method: "GET",
+      token: await getToken(),
+      queryParams: query,
+    });
+    return {
+        statusCode: 200,
+        message: "Success",
+        data: res
+    };
+  } catch (error: any) {
+    console.error("[Action Error] getExpensesAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi lấy danh sách giao dịch chi phí",
+      data: { result: [], meta: {} },
+    };
+  }
+};
+
+// Tạo giao dịch chi phí mới
+export const createExpenseAction = async (
+  data: CreateExpenseDto,
+): Promise<IBackendRes<IExpense>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<IExpense>>({
+      url: `${BE}/expenses`,
+      method: "POST",
+      token: await getToken(),
+      body: data,
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] createExpenseAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi tạo giao dịch chi phí",
+    };
+  }
+};
+
+// Cập nhật giao dịch chi phí
+export const updateExpenseAction = async (
+  id: string,
+  data: Partial<CreateExpenseDto>,
+): Promise<IBackendRes<IExpense>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<IExpense>>({
+      url: `${BE}/expenses/${id}`,
+      method: "PATCH",
+      token: await getToken(),
+      body: data,
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] updateExpenseAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi cập nhật giao dịch chi phí",
+    };
+  }
+};
+
+// Xoá giao dịch chi phí
+export const deleteExpenseAction = async (id: string): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<any>>({
+      url: `${BE}/expenses/${id}`,
+      method: "DELETE",
+      token: await getToken(),
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] deleteExpenseAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi xóa giao dịch chi phí",
+    };
+  }
+};
+
+// --- Không gian gia đình (Space Members) ---
+
+// Đổi quyền thành viên
+export const changeMemberRoleAction = async (
+  memberId: string,
+  role: "parent" | "member"
+): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<any>>({
+      url: `${BE}/space/me/members/${memberId}/role`,
+      method: "PATCH",
+      token: await getToken(),
+      body: { role },
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] changeMemberRoleAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi cập nhật quyền thành viên",
+    };
+  }
+};
+
+// Xoá thành viên khỏi không gian
+export const removeMemberAction = async (memberId: string): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<any>>({
+      url: `${BE}/space/me/members/${memberId}`,
+      method: "DELETE",
+      token: await getToken(),
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] removeMemberAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi xóa thành viên",
+    };
   }
 };

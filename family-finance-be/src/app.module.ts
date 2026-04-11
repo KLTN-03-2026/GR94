@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '@/Module/auths/passport/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { CategorisModule } from '@/Module/categoris/categoris.module';
 import { IncomesModule } from '@/Module/incomes/incomes.module';
+import { ExpensesModule } from '@/Module/expenses/expenses.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { IncomesModule } from '@/Module/incomes/incomes.module';
     AccountModule,
     CategorisModule,
     IncomesModule,
+    ExpensesModule,
   ],
   controllers: [AppController],
   providers: [

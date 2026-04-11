@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateIncomeDto } from './dto/create-income.dto';
 import { UpdateIncomeDto } from './dto/update-income.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -92,12 +97,146 @@ export class IncomesService {
   }
 
   //GET/incomes/id (Nguyên)
+  async geIncomeById(
+    id: string,
+    userID: string,
+    spaceID: string,
+    role: string,
+  ) {
+    const income = await this.incomesModel
+      .findOne({ _id: id, spaceID: new Types.ObjectId(spaceID) })
+      .populate('categoryID', 'name icon color')
+      .populate('userID', 'name avatar')
+      .lean();
 
-  update(id: number, updateIncomeDto: UpdateIncomeDto) {
-    return `This action updates a #${id} income`;
+    if (!income) throw new NotFoundException('Không tìm thấy khoản thu');
+
+    if (role === 'member' && income.userID.toString() !== userID) {
+      throw new ForbiddenException('Bạn không có quyền xem khoản thu này');
+    }
+
+    return income;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} income`;
+  async updateIncome(
+    id: string,
+    dto: UpdateIncomeDto,
+    userId: string,
+    spaceId: string,
+    role: string,
+  ) {
+    const income = await this.incomesModel.findOne({
+      _id: id,
+      spaceID: new Types.ObjectId(spaceId),
+    });
+
+    if (!income) throw new NotFoundException('Không tìm thấy khoản thu');
+
+    if (role === 'member' && income.userID.toString() !== userId) {
+      throw new ForbiddenException('Bạn không có quyền sửa khoản thu này');
+    }
+
+    const updateData: any = {};
+    if (dto.amount !== undefined) updateData.amount = dto.amount;
+    if (dto.categoryID)
+      updateData.categoryID = new Types.ObjectId(dto.categoryID);
+    if (dto.date) updateData.date = new Date(dto.date);
+    if (dto.description !== undefined) updateData.description = dto.description;
+
+    return this.incomesModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .populate('categoryID', 'name icon color')
+      .populate('userID', 'name avatar');
+  }
+
+  async deleteIncome(
+    id: string,
+    userID: string,
+    spaceID: string,
+    role: string,
+  ) {
+    const income = await this.incomesModel.findOne({
+      _id: id,
+      spaceID: new Types.ObjectId(spaceID),
+    });
+
+    if (!income) throw new NotFoundException('Không tìm thấy khoản thu');
+
+    if (role === 'member' && income.userID.toString() !== userID) {
+      throw new ForbiddenException('Bạn không có quyền xóa khoản thu này');
+    }
+
+    await this.incomesModel.findByIdAndDelete(id);
+    return { message: 'Đã xóa khoản thu' };
+  }
+
+  // Lấy tổng hợp theo tháng cho dashboard
+  async getMonthlySummary(spaceID: string, month: number, year: number) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+
+    const result = await this.incomesModel.aggregate([
+      {
+        $match: {
+          spaceID: new Types.ObjectId(spaceID),
+          date: { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: '$categoryId',
+          totalAmount: { $sum: '$amount' },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'category',
+        },
+      },
+      { $unwind: '$category' },
+      {
+        $project: {
+          _id: 0,
+          categoryId: '$_id',
+          name: '$category.name',
+          icon: '$category.icon',
+          color: '$category.color',
+          totalAmount: 1,
+          count: 1,
+        },
+      },
+      { $sort: { totalAmount: -1 } },
+    ]);
+
+    return {
+      month,
+      year,
+      totalIncome: result.reduce((s, r) => s + r.totalAmount, 0),
+      byCategory: result,
+    };
+  }
+  async getTotalIncomeByMonth(
+    spaceID: string,
+    month: number,
+    year: number,
+  ): Promise<number> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+
+    const result = await this.incomesModel.aggregate([
+      {
+        $match: {
+          spaceID: new Types.ObjectId(spaceID),
+          date: { $gte: startDate, $lte: endDate },
+        },
+      },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]);
+
+    return result[0]?.total ?? 0;
   }
 }

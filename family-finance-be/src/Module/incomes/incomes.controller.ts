@@ -23,7 +23,14 @@ export class IncomesController {
     @Query('month') month: string,
     @Query('year') year: string,
     @GetUser('spaceId') spaceId: string,
-  ) {}
+  ) {
+    const now = new Date();
+    return this.incomesService.getMonthlySummary(
+      spaceId,
+      Number(month) || now.getMonth() + 1,
+      Number(year) || now.getFullYear(),
+    );
+  }
 
   //POST/incomes
   @Post()
@@ -35,6 +42,7 @@ export class IncomesController {
     return this.incomesService.createIncomes(dto, userId, spaceId);
   }
 
+  //GET/incomes
   @Get()
   findAll(
     @Query() query: GetIncomeDto,
@@ -43,5 +51,39 @@ export class IncomesController {
     @GetUser('role') role: string,
   ) {
     return this.incomesService.getIncomes(query, userId, spaceId, role);
+  }
+
+  //GET/incomes/:id
+  @Get(':id')
+  findOne(
+    @Param('id') id: string,
+    @GetUser('_id') userId: string,
+    @GetUser('spaceId') spaceId: string,
+    @GetUser('role') role: string,
+  ) {
+    return this.incomesService.geIncomeById(id, userId, spaceId, role);
+  }
+
+  //PATCH/incomes/:id
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateIncomeDto,
+    @GetUser('_id') userId: string,
+    @GetUser('spaceId') spaceId: string,
+    @GetUser('role') role: string,
+  ) {
+    return this.incomesService.updateIncome(id, dto, userId, spaceId, role);
+  }
+
+  //DELETE/incomes/:id
+  @Delete(':id')
+  remove(
+    @Param('id') id: string,
+    @GetUser('_id') userId: string,
+    @GetUser('spaceId') spaceId: string,
+    @GetUser('role') role: string,
+  ) {
+    return this.incomesService.deleteIncome(id, userId, spaceId, role);
   }
 }

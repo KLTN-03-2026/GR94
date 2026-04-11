@@ -14,12 +14,14 @@ import {
   GearSix,
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
+import { logoutAction } from "@/lib/action";
+import { useAuthStore } from "@/store/auth.store";
 
 const navItems = [
   { name: "Trang chủ", href: "/dashboard", icon: <House size={24} /> },
   {
     name: "Giao dịch",
-    href: "/dashboard/transactions",
+    href: "/dashboard/transaction",
     icon: <Receipt size={24} />,
   },
   { name: "Ngân sách", href: "/dashboard/budget", icon: <Wallet size={24} /> },
@@ -30,7 +32,7 @@ const navItems = [
   },
   {
     name: "Thành viên",
-    href: "/members",
+    href: "/dashboard/members",
     icon: <Users size={24} />,
     desktopOnly: true,
   },
@@ -46,6 +48,20 @@ export default function DashboardLayout({
   const [showMobileDropdown, setShowMobileDropdown] = useState(false);
   const desktopRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
+
+  const handleLogout = async () => {
+    toast.success("Đang xử lý đăng xuất...", {
+      description: "Hẹn gặp lại bạn sớm nhé!",
+    });
+    setShowDropdown(false);
+    setShowMobileDropdown(false);
+    
+    try {
+      await logoutAction();
+    } catch(e) {}
+    useAuthStore.getState().clear();
+    window.location.href = "/auth/login";
+  };
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -70,7 +86,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-[#0A100D] text-slate-900 dark:text-slate-100 overflow-hidden">
       {/* DESKTOP SIDEBAR */}
-      <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-[#122017] border-r border-slate-200 dark:border-slate-800/60 z-10">
+      <aside className="hidden md:flex fixed left-0 top-0 bottom-0 flex-col w-64 bg-white dark:bg-[#122017] border-r border-slate-200 dark:border-slate-800/60 z-30">
         <div className="p-6">
           <h1 className="text-2xl font-bold text-green-600 dark:text-green-500">
             GiaKế
@@ -119,12 +135,7 @@ export default function DashboardLayout({
             </Link>
             <div className="h-px bg-slate-100 dark:bg-slate-800 w-full" />
             <button
-              onClick={() => {
-                toast.success("Đang xử lý đăng xuất...", {
-                  description: "Hẹn gặp lại bạn sớm nhé!",
-                });
-                setShowDropdown(false);
-              }}
+              onClick={handleLogout}
               className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400 w-full text-left transition-colors font-medium"
             >
               <SignOut size={20} />
@@ -176,12 +187,7 @@ export default function DashboardLayout({
             </Link>
             <div className="h-px bg-slate-100 dark:bg-slate-800/60 w-full" />
             <button
-              onClick={() => {
-                toast.success("Đang xử lý đăng xuất...", {
-                  description: "Hẹn gặp lại bạn sớm nhé!",
-                });
-                setShowMobileDropdown(false);
-              }}
+              onClick={handleLogout}
               className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400 w-full text-left transition-colors font-medium"
             >
               <SignOut size={20} />
@@ -192,7 +198,7 @@ export default function DashboardLayout({
       </div>
 
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col pt-16 md:pt-0 pb-16 md:pb-0 h-full overflow-y-auto">
+      <main className="flex-1 md:ml-64 flex flex-col pt-16 md:pt-0 pb-16 md:pb-0 h-full overflow-y-auto">
         {children}
       </main>
 

@@ -1,5 +1,5 @@
 // Response từ NestJS 
-interface IBackendRes<T = any> {
+export interface IBackendRes<T = any> {
   statusCode?: number;
   message?: string | string[];
   error?: string;
@@ -11,7 +11,7 @@ interface IBackendRes<T = any> {
 }
 
 // User 
-interface IUser {
+export interface IUser {
   _id: string;
   name: string;
   email: string;
@@ -23,7 +23,7 @@ interface IUser {
 }
 
 // sendRequest options 
-interface IRequest {
+export interface IRequest {
   url: string;
   method: "GET" | "POST" | "PATCH" | "DELETE";
   body?: any;
@@ -33,3 +33,47 @@ interface IRequest {
   nextOption?: RequestInit;
   isFormData?: boolean;
 }
+
+// Income
+export interface IIncome {
+  _id: string;
+  userID: {
+    _id: string;
+    name: string;
+    avatar: string | null;
+  };
+  categoryID: {
+    _id: string;
+    name: string;
+    icon: string;
+    color?: string;
+    type?: string;
+  };
+  amount: number;
+  date: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateIncomeDto {
+  categoryID: string;
+  amount: number;
+  date: string;
+  description?: string;
+}
+
+export interface GetIncomeDto {
+  month?: number;
+  year?: number;
+  categoryId?: string;
+  userId?: string;
+  page?: number;
+  limit?: number;
+}
+
+// Aliases for Expense and Generic Transaction
+export type IExpense = IIncome;
+export type CreateExpenseDto = CreateIncomeDto;
+export type GetExpenseDto = GetIncomeDto;
+export type ITransaction = IIncome;
