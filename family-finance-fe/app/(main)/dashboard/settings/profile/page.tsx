@@ -130,10 +130,10 @@ export default function ProfilePage() {
           <CaretLeft size={24} weight="bold" />
         </button>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-50 tracking-tighter">
             Thông tin cá nhân
           </h1>
-          <p className="text-slate-500 text-sm md:text-base mt-1">
+          <p className="text-slate-500 text-sm md:text-base font-medium mt-1">
             Cập nhật ảnh đại diện và chi tiết liên hệ
           </p>
         </div>
@@ -166,7 +166,7 @@ export default function ProfilePage() {
               <Camera size={18} weight="fill" />
             </div>
           </div>
-          <span className="text-xs font-bold text-slate-400 mt-4 uppercase tracking-[0.2em] group-hover:text-green-500 transition-colors">
+          <span className="text-[11px] font-bold text-slate-400 mt-4 uppercase tracking-widest group-hover:text-green-500 transition-colors">
             Thay đổi ảnh
           </span>
         </div>
@@ -174,7 +174,7 @@ export default function ProfilePage() {
         {/* Form Section */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-slate-700 dark:text-slate-300 font-medium">Họ và tên</Label>
+            <Label htmlFor="name" className="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Họ và tên</Label>
             <Input 
               id="name"
               placeholder="Nhập họ và tên của bạn" 
@@ -187,7 +187,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-slate-700 dark:text-slate-300 font-medium">Địa chỉ Email</Label>
+            <Label htmlFor="email" className="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Địa chỉ Email</Label>
             <Input 
               id="email"
               placeholder="email@example.com" 
@@ -207,14 +207,14 @@ export default function ProfilePage() {
               type="button" 
               variant="outline" 
               onClick={() => router.back()}
-              className="flex-1 h-12 rounded-xl text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 font-semibold"
+              className="flex-1 h-12 rounded-xl text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 font-bold"
             >
               Trở về
             </Button>
             <Button 
               type="submit" 
               disabled={isSubmitting || (!isDirty && !isAvatarDirty)}
-              className="flex-1 h-12 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold transition-all shadow-md hover:shadow-lg disabled:opacity-50"
+              className="flex-1 h-12 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold transition-all shadow-md hover:shadow-lg disabled:opacity-50"
             >
               {isSubmitting ? "Đang lưu..." : "Lưu thay đổi"}
             </Button>

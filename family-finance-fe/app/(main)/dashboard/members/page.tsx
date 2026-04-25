@@ -24,8 +24,12 @@ export default function MembersPage() {
     queryKey: ["mySpace"],
     queryFn: async () => {
       const res = await getMySpaceAction();
-      if (res.error) throw new Error(Array.isArray(res.message) ? res.message[0] : res.message);
-      return (res as any).data || res; // GetMySpace directly returns the space obj based on backend implementation
+      if (res?.error || (res?.statusCode && res.statusCode >= 400)) {
+        throw new Error(
+          Array.isArray(res?.message) ? res.message[0] : (res?.message || "Lỗi tải không gian")
+        );
+      }
+      return res?.data || res || null; 
     },
   });
 

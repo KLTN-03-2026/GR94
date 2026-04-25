@@ -7,7 +7,7 @@ import QueryProvider from "@/components/providers/query-provider";
 const inter = Inter({ subsets: ["latin", "vietnamese"] });
 
 export const metadata: Metadata = {
-  title: "Quản lý tài chính gia đình",
+  title: "Gia Kế",
   description: "Minh bạch từng khoản chi, gắn kết cả nhà",
 };
 

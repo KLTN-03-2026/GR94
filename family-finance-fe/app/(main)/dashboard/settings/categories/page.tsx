@@ -145,7 +145,7 @@ export default function CategoriesPage() {
           className="w-full bg-gradient-to-b from-green-600 to-green-700 text-white py-4 px-6 rounded-2xl flex items-center justify-center gap-3 shadow-[0_8px_30px_rgba(22,163,74,0.25)] transition-all active:scale-[0.98]"
         >
           <PlusCircle size={28} weight="fill" />
-          <span className="font-semibold text-lg">Thêm danh mục mới</span>
+          <span className="font-bold text-lg">Thêm danh mục mới</span>
         </button>
       </div>
 
@@ -268,12 +268,12 @@ export default function CategoriesPage() {
                       <h3 className="font-bold text-lg text-slate-900 dark:text-slate-100 flex items-center gap-2">
                         {cat.name}
                         {cat.isSystem && (
-                          <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-sm font-semibold text-slate-500 uppercase">
+                          <span className="text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-sm font-bold text-slate-500 uppercase tracking-widest">
                             Mặc định
                           </span>
                         )}
                       </h3>
-                      <p className="text-slate-500 dark:text-slate-400 text-xs mt-0.5">
+                      <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-0.5">
                         -- giao dịch tháng này
                       </p>
                     </div>
@@ -297,7 +297,7 @@ export default function CategoriesPage() {
                 <h4 className="font-bold text-slate-900 dark:text-slate-100">
                   Hạn mức chi tiêu
                 </h4>
-                <span className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider font-bold">
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
                   0% Đã dùng
                 </span>
               </div>
@@ -347,7 +347,7 @@ export default function CategoriesPage() {
                     )}
                     {cat.isSystem && (
                       <div className="z-10 mt-2">
-                        <span className="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-sm font-semibold text-slate-500 uppercase">
+                        <span className="text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-sm font-bold text-slate-500 uppercase tracking-widest">
                           Mặc định
                         </span>
                       </div>
@@ -408,7 +408,7 @@ export default function CategoriesPage() {
               />
             </div>
             <div>
-              <h4 className="text-2xl font-black text-green-700 dark:text-green-500 tracking-tight">
+              <h4 className="text-2xl font-bold text-green-700 dark:text-green-500 tracking-tight">
                 Tối ưu hóa danh mục
               </h4>
               <p className="text-slate-600 dark:text-slate-400 max-w-lg mt-2 leading-relaxed">

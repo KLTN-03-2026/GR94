@@ -29,14 +29,14 @@ export default function AdminUsersPage() {
   return (
     <div className="bg-white dark:bg-[#122017] rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/60 p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+        <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight uppercase">
           Danh sách thành viên
         </h2>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-medium">
+          <thead className="bg-slate-50 dark:bg-slate-800/50 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
             <tr>
               <th className="px-4 py-3 rounded-l-lg">Người dùng</th>
               <th className="px-4 py-3">Email</th>
@@ -73,7 +73,7 @@ export default function AdminUsersPage() {
                       className="w-9 h-9 rounded-full object-cover ring-2 ring-slate-100"
                       alt="avatar"
                     />
-                    <span className="font-medium text-slate-700 dark:text-slate-200">
+                    <span className="font-bold text-slate-700 dark:text-slate-200">
                       {u.name}
                     </span>
                   </td>
@@ -82,7 +82,7 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-4 py-4">
                     <span
-                      className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest ${
                         u.accountId?.sysRole === "admin"
                           ? "bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-300"
                           : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
@@ -98,7 +98,7 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex gap-3">
-                      <button className="text-red-500 hover:text-red-600 text-xs font-medium hover:underline transition-colors">
+                      <button className="text-red-500 hover:text-red-600 text-[11px] font-bold uppercase tracking-widest hover:underline transition-colors">
                         Khóa TK
                       </button>
                     </div>

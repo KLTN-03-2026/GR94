@@ -62,12 +62,12 @@ export default function AdminCategoriesPage() {
   return (
     <div className="bg-white dark:bg-[#122017] rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800/60 p-6">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-slate-800 dark:text-white">
+        <h2 className="text-xl font-bold text-slate-800 dark:text-white tracking-tight uppercase">
           Danh mục hệ thống
         </h2>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors"
+          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors"
         >
           {showForm ? "Đóng form" : "+ Thêm danh mục"}
         </button>
@@ -79,7 +79,7 @@ export default function AdminCategoriesPage() {
           className="mb-8 bg-slate-50 dark:bg-slate-800/50 p-5 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-wrap gap-4 items-end"
         >
           <div className="flex-1 min-w-[200px]">
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+            <label className="block text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">
               Tên danh mục
             </label>
             <input
@@ -93,7 +93,7 @@ export default function AdminCategoriesPage() {
             />
           </div>
           <div className="w-24">
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+            <label className="block text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">
               Icon
             </label>
             <select
@@ -111,7 +111,7 @@ export default function AdminCategoriesPage() {
             </select>
           </div>
           <div className="w-32">
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+            <label className="block text-[11px] font-bold text-slate-500 mb-1.5 uppercase tracking-widest">
               Loại
             </label>
             <select
@@ -127,7 +127,7 @@ export default function AdminCategoriesPage() {
           </div>
           <button
             type="submit"
-            className="bg-slate-800 hover:bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-5 py-2 rounded-lg text-sm font-semibold transition-colors"
+            className="bg-slate-800 hover:bg-slate-900 dark:bg-white dark:text-slate-900 text-white px-5 py-2 rounded-lg text-sm font-bold transition-colors"
           >
             Lưu ngay
           </button>
@@ -156,10 +156,10 @@ export default function AdminCategoriesPage() {
                 {cat.icon}
               </div>
               <div>
-                <h3 className="font-semibold text-slate-800 dark:text-slate-100 line-clamp-1">
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 line-clamp-1">
                   {cat.name}
                 </h3>
-                <p className="text-xs font-medium mt-0.5 text-slate-500">
+                <p className="text-[11px] font-bold mt-0.5 text-slate-500 uppercase tracking-widest">
                   {cat.type === "expense" ? "Khoản chi" : "Khoản thu"}
                 </p>
               </div>

@@ -40,8 +40,8 @@ const SettingsPage = () => {
     queryKey: ["mySpace"],
     queryFn: async () => {
       const res = await getMySpaceAction();
-      if (res.error) return null;
-      return res.data;
+      if (res?.error || (res?.statusCode && res.statusCode >= 400)) return null;
+      return res?.data || res || null;
     },
     enabled: !!user?.spaceId,
   });
@@ -57,10 +57,10 @@ const SettingsPage = () => {
     <div className="w-full max-w-3xl mx-auto pb-20 md:pb-8 animate-in fade-in duration-500">
       {/* Header */}
       <div className="mb-6 md:mb-8 pt-4 flex flex-col items-center text-center md:items-start md:text-left">
-        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight">
+        <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-slate-50 tracking-tighter">
           Tài Khoản
         </h1>
-        <p className="text-slate-500 text-sm md:text-base mt-2">
+        <p className="text-slate-500 text-sm md:text-base font-medium mt-2">
           Quản lý tài khoản và không gian gia đình
         </p>
       </div>
@@ -80,7 +80,7 @@ const SettingsPage = () => {
             )}
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
               {user?.name}
             </h2>
             <div className="flex items-center gap-1.5 mt-1">
@@ -98,7 +98,7 @@ const SettingsPage = () => {
       <div className="space-y-6">
         {/* Nhóm: Tài khoản */}
         <section>
-          <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 px-2">
+          <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-2">
             Tài khoản & Bảo mật
           </h3>
           <div className="bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-sm">
@@ -122,7 +122,7 @@ const SettingsPage = () => {
 
         {/* Nhóm: Gia đình */}
         <section>
-          <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 px-2">
+          <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-2">
             Không gian Gia đình
           </h3>
           <div className="bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-sm">
@@ -149,7 +149,7 @@ const SettingsPage = () => {
 
         {/* Nhóm: Khác */}
         <section>
-          <h3 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-3 px-2">
+          <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-2">
             Khác
           </h3>
           <div className="bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-sm">
@@ -182,7 +182,7 @@ const SettingsPage = () => {
 
           <div className="flex flex-col items-center justify-center py-6 gap-4">
             <div className="bg-green-50 dark:bg-green-950/30 p-6 rounded-2xl border border-green-100 dark:border-green-800/30 w-full flex flex-col items-center gap-2">
-              <span className="text-[10px] font-bold text-green-600 dark:text-green-400 uppercase tracking-[0.2em]">
+              <span className="text-[11px] font-bold text-green-600 dark:text-green-400 uppercase tracking-widest">
                 Mã mời hiện tại
               </span>
               <span className="text-4xl font-mono font-black text-slate-900 dark:text-slate-50 tracking-[0.3em]">
@@ -223,7 +223,7 @@ const SettingRow = ({
         <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-400 group-hover:text-green-600 dark:group-hover:text-green-400 group-hover:bg-green-50 dark:group-hover:bg-green-500/10 transition-colors">
           {icon}
         </div>
-        <span className="font-medium text-slate-700 dark:text-slate-200">
+        <span className="font-bold text-slate-700 dark:text-slate-200">
           {title}
         </span>
         {badge && (

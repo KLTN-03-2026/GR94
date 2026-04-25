@@ -103,9 +103,26 @@ export default function DashboardLayout({
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:flex fixed left-0 top-0 bottom-0 flex-col w-64 bg-white dark:bg-[#122017] border-r border-slate-200 dark:border-slate-800/60 z-30">
         <div className="p-6">
-          <h1 className="text-2xl font-bold text-green-600 dark:text-green-500">
-            Gia Kế
-          </h1>
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 bg-[#22C55E] rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+              </svg>
+            </div>
+            <span className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              Gia Kế
+            </span>
+          </div>
         </div>
 
         <div className="flex-1 px-4 py-2 space-y-2 overflow-y-auto">
@@ -166,7 +183,7 @@ export default function DashboardLayout({
             <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-700 dark:text-green-300 font-bold overflow-hidden border border-slate-200 dark:border-slate-800">
               {user?.avatar ? (
                 <img
-                  src={user.avatar}
+                  src={user?.avatar}
                   alt="Avatar"
                   className="w-full h-full object-cover"
                 />
@@ -175,9 +192,9 @@ export default function DashboardLayout({
               )}
             </div>
             <div>
-              <div className="font-semibold text-sm">{user.name}</div>
+              <div className="font-semibold text-sm">{user?.name}</div>
               <div className="text-xs text-slate-500">
-                {user.role === "parent" ? "Chủ hộ" : "Thành viên"}
+                {user?.role === "parent" ? "Chủ hộ" : "Thành viên"}
               </div>
             </div>
           </div>
@@ -186,9 +203,24 @@ export default function DashboardLayout({
 
       {/* MOBILE HEADER (Chỉ hiện trên Mobile) */}
       <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white dark:bg-[#122017] border-b border-slate-200 dark:border-slate-800/60 flex items-center justify-between px-4 z-20">
-        <h1 className="text-xl font-bold text-green-600 dark:text-green-500">
-          GiaKế
-        </h1>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-[#22C55E] rounded-lg flex items-center justify-center flex-shrink-0">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z" />
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
+            </svg>
+          </div>
+          <span className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Gia Kế</span>
+        </div>
 
         {/* MOBILE DROPDOWN CONTAINER */}
         <div className="relative" ref={mobileRef}>

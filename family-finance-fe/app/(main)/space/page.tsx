@@ -195,10 +195,10 @@ export default function SpaceSetupPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-[#6bff8f]/30 rounded-2xl mb-5 text-[#006a2d]">
             <IcoFamily />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#2c2f31]">
+          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[#2c2f31]">
             Bắt đầu hành trình
           </h1>
-          <p className="text-[#595c5e] text-sm mt-2">
+          <p className="text-[#595c5e] text-sm font-medium mt-2">
             Xin chào{" "}
             <span className="font-semibold text-[#006a2d]">
               {user?.name ?? "bạn"}
@@ -213,7 +213,7 @@ export default function SpaceSetupPage() {
           <div className="bg-white rounded-3xl p-7 shadow-[0_32px_64px_rgba(44,47,49,0.06)] border border-white/40 flex flex-col gap-5">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#006a2d]" />
-              <span className="text-[#006a2d] font-semibold text-xs tracking-widest uppercase">
+              <span className="text-[#006a2d] font-bold text-[11px] tracking-widest uppercase">
                 Tạo gia đình mới
               </span>
             </div>
@@ -223,17 +223,17 @@ export default function SpaceSetupPage() {
                 <IcoHome />
               </div>
               <div>
-                <div className="font-semibold text-[#2c2f31] text-sm">
+                <div className="font-bold text-[#2c2f31] text-sm">
                   Bạn là quản lý (parent)
                 </div>
-                <div className="text-[#595c5e] text-xs mt-0.5 leading-relaxed">
+                <div className="text-[#595c5e] text-xs font-medium mt-0.5 leading-relaxed">
                   Toàn quyền quản lý thu chi, ngân sách và thành viên.
                 </div>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-bold text-[#747779] tracking-wider uppercase px-1">
+              <label className="text-[11px] font-bold text-[#747779] tracking-widest uppercase px-1">
                 Tên gia đình
               </label>
               <input
@@ -297,7 +297,7 @@ export default function SpaceSetupPage() {
           {/* Divider mobile */}
           <div className="flex lg:hidden items-center gap-4">
             <div className="flex-1 h-px bg-[#dfe3e6]" />
-            <span className="text-[10px] font-black text-[#747779] tracking-[0.2em]">
+            <span className="text-[11px] font-black text-[#747779] tracking-[0.2em]">
               HOẶC
             </span>
             <div className="flex-1 h-px bg-[#dfe3e6]" />
@@ -307,7 +307,7 @@ export default function SpaceSetupPage() {
           <div className="bg-white rounded-3xl p-7 shadow-[0_32px_64px_rgba(44,47,49,0.06)] border border-white/40 flex flex-col gap-5">
             <div className="flex items-center gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-[#006573]" />
-              <span className="text-[#006573] font-semibold text-xs tracking-widest uppercase">
+              <span className="text-[#006573] font-bold text-[11px] tracking-widest uppercase">
                 Tham gia bằng mã
               </span>
             </div>
@@ -317,17 +317,17 @@ export default function SpaceSetupPage() {
                 <IcoKey />
               </div>
               <div>
-                <div className="font-semibold text-[#2c2f31] text-sm">
+                <div className="font-bold text-[#2c2f31] text-sm">
                   Bạn là thành viên (member)
                 </div>
-                <div className="text-[#595c5e] text-xs mt-0.5 leading-relaxed">
+                <div className="text-[#595c5e] text-xs font-medium mt-0.5 leading-relaxed">
                   Nhập và theo dõi chi tiêu cá nhân trong phòng chung.
                 </div>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-[10px] font-bold text-[#747779] tracking-wider uppercase px-1">
+              <label className="text-[11px] font-bold text-[#747779] tracking-widest uppercase px-1">
                 Mã mời (6 ký tự)
               </label>
               <input

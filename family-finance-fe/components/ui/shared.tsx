@@ -298,7 +298,7 @@ export const GiaKeLogo = ({ size = "md" }: { size?: "sm" | "md" | "lg" }) => {
       <span
         className={`text-slate-900 dark:text-white font-bold tracking-tight ${text[size]}`}
       >
-        Family Finance
+        Gia Kế
       </span>
     </div>
   );

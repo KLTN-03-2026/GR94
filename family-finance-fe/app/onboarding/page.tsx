@@ -47,7 +47,7 @@ const OnboardingPage = () => {
               <line x1="3" y1="9" x2="21" y2="9" />
               <line x1="9" y1="21" x2="9" y2="21" />
             </svg>
-            Family Finance
+            Gia Kế
           </h2>
           <button className="w-10 h-10 flex items-center justify-end md:hidden">
             <svg
@@ -127,10 +127,10 @@ const OnboardingPage = () => {
       {/* ── Right Panel - Content ───────────────────────── */}
       <div className="flex-1 flex flex-col px-8 pt-10 pb-6 md:p-16 xl:p-24 bg-white dark:bg-[#0f1a14] rounded-t-[3rem] md:rounded-none -mt-8 md:mt-0 z-10 md:z-auto shadow-[0_-10px_40px_rgba(0,0,0,0.05)] md:shadow-none min-h-[50vh] md:min-h-screen overflow-y-auto relative">
         <div className="flex-1 flex flex-col justify-center max-w-[400px] md:max-w-md lg:max-w-lg mx-auto w-full">
-          <h1 className="text-slate-900 dark:text-slate-100 text-[32px] md:text-[42px] lg:text-[48px] font-bold leading-[1.15] text-center md:text-left tracking-tight">
-            Chào mừng tới <span className="text-[#22C55E]">Family Finance</span>
+          <h1 className="text-slate-900 dark:text-slate-100 text-[32px] md:text-5xl lg:text-5xl font-black leading-tight text-center md:text-left tracking-tighter">
+            Chào mừng tới <span className="text-[#22C55E]">Gia Kế</span>
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg font-normal leading-relaxed text-center md:text-left mt-3 mb-8 md:mb-10 px-2 md:px-0">
+          <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg font-medium leading-relaxed text-center md:text-left mt-3 mb-8 md:mb-10 px-2 md:px-0">
             Quản lý tài chính gia đình thông minh,
             <br className="hidden md:block" /> minh bạch và gắn kết.
           </p>
@@ -149,7 +149,7 @@ const OnboardingPage = () => {
                 <div className="text-lg md:text-2xl font-bold text-[#22C55E]">
                   <Counter to={s.num} suffix={s.suffix} />
                 </div>
-                <div className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 mt-1 md:mt-1.5 font-medium">
+                <div className="text-[11px] md:text-[11px] text-slate-500 dark:text-slate-400 mt-1 md:mt-1.5 font-bold uppercase tracking-widest">
                   {s.label}
                 </div>
               </div>

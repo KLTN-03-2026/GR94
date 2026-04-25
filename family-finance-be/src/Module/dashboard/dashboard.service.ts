@@ -189,46 +189,44 @@ export class DashboardService {
       });
     }
 
-    // 6. Alert Budgets (Budgets >= threshold) - Members shouldn't process or see global alerts
+    // 6. Alert Budgets (Budgets >= threshold)
     const alertBudgets: any[] = [];
-    if (role !== 'member') {
-      const activeBudgets = await this.budgetModel
-        .find({
-          spaceId: spaceObjectId,
-          month,
-          year,
-          isAlertEnabled: { $ne: false },
-        })
-        .populate('categoryId', 'name icon color')
-        .lean();
+    const activeBudgets = await this.budgetModel
+      .find({
+        spaceId: spaceObjectId,
+        month,
+        year,
+        isAlertEnabled: { $ne: false },
+      })
+      .populate('categoryId', 'name icon color')
+      .lean();
 
-      for (const budget of activeBudgets) {
-        const expensesForBudget = await this.expensesModel.aggregate([
-          {
-            $match: {
-              spaceID: spaceObjectId,
-              categoryID: new Types.ObjectId(
-                (budget.categoryId as any)?._id ?? budget.categoryId,
-              ),
-              date: { $gte: startOfMonth, $lte: endOfMonth },
-            },
+    for (const budget of activeBudgets) {
+      const expensesForBudget = await this.expensesModel.aggregate([
+        {
+          $match: {
+            spaceID: spaceObjectId,
+            categoryID: new Types.ObjectId(
+              (budget.categoryId as any)?._id ?? budget.categoryId,
+            ),
+            date: { $gte: startOfMonth, $lte: endOfMonth },
           },
-          { $group: { _id: null, total: { $sum: '$amount' } } },
-        ]);
-        const spentAmount = expensesForBudget[0]?.total ?? 0;
-        const percentage =
-          budget.limitAmount > 0 ? (spentAmount / budget.limitAmount) * 100 : 0;
-        const threshold = budget.alertThresholds?.[0] || 80;
+        },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]);
+      const spentAmount = expensesForBudget[0]?.total ?? 0;
+      const percentage =
+        budget.limitAmount > 0 ? (spentAmount / budget.limitAmount) * 100 : 0;
+      const threshold = budget.alertThresholds?.[0] || 80;
 
-        if (percentage >= threshold) {
-          alertBudgets.push({
-            categoryId: budget.categoryId,
-            limitAmount: budget.limitAmount,
-            spentAmount,
-            percentage: Math.round(percentage),
-            threshold,
-          });
-        }
+      if (percentage >= threshold) {
+        alertBudgets.push({
+          categoryId: budget.categoryId,
+          limitAmount: budget.limitAmount,
+          spentAmount,
+          percentage: Math.round(percentage),
+          threshold,
+        });
       }
     }
 

@@ -91,12 +91,12 @@ const RegisterPage = () => {
                 <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
               </svg>
             </div>
-            <span className="text-white text-xl font-bold">Family Finance</span>
+            <span className="text-white text-xl font-bold">Gia Kế</span>
           </div>
 
           
           <div className="relative z-10">
-            <h2 className="text-white text-3xl font-bold leading-snug mb-8">
+            <h2 className="text-white text-4xl font-black leading-tight tracking-tighter mb-8">
               Bắt đầu hành trình<br/>tài chính cùng gia đình
             </h2>
             <div className="flex flex-col gap-5">
@@ -110,8 +110,8 @@ const RegisterPage = () => {
                     {f.icon}
                   </div>
                   <div>
-                    <div className="text-white font-semibold text-sm">{f.title}</div>
-                    <div className="text-white/70 text-xs mt-0.5">{f.desc}</div>
+                    <div className="text-white font-bold text-sm tracking-tight">{f.title}</div>
+                    <div className="text-white/70 text-xs font-medium mt-0.5">{f.desc}</div>
                   </div>
                 </div>
               ))}
@@ -134,10 +134,10 @@ const RegisterPage = () => {
           </div>
 
           <div className="mb-7 text-center lg:text-left">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
               Tạo tài khoản
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1.5">
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-1.5">
               Chỉ mất 1 phút để bắt đầu
             </p>
           </div>
@@ -214,7 +214,7 @@ const RegisterPage = () => {
 
           <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
             Đã có tài khoản?{' '}
-            <Link href="/login" className="text-[#22C55E] hover:text-green-600 font-semibold transition-colors">
+            <Link href="/login" className="text-[#22C55E] hover:text-green-600 font-bold transition-colors">
               Đăng nhập
             </Link>
           </p>

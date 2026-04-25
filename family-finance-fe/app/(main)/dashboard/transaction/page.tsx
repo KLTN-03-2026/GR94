@@ -140,7 +140,7 @@ export default function TransactionPage() {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-slate-800 dark:text-white tracking-tight">
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
             Lịch sử giao dịch
           </h1>
           <p className="text-slate-500 mt-2 font-medium">
@@ -263,7 +263,7 @@ export default function TransactionPage() {
       ) : (
         <div className="space-y-4">
           <div className="flex items-center justify-between px-2">
-            <span className="text-sm font-bold text-slate-400 tracking-wider uppercase">
+            <span className="text-[11px] font-bold text-slate-400 tracking-widest uppercase">
               Danh sách giao dịch ({filteredTransactions.length})
             </span>
           </div>

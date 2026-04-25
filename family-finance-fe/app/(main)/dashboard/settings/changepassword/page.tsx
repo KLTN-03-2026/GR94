@@ -131,18 +131,18 @@ const ChangePasswordPage = () => {
         <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center group-hover:bg-green-50 dark:group-hover:bg-green-900/30 transition-colors">
           <CaretLeft size={18} weight="bold" />
         </div>
-        <span className="font-medium">Quay lại</span>
+        <span className="font-bold">Quay lại</span>
       </button>
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 tracking-tight flex items-center gap-3">
+        <h1 className="text-3xl font-black text-slate-900 dark:text-slate-50 tracking-tighter flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-green-600 dark:text-green-400">
             <LockKey size={24} weight="duotone" />
           </div>
           Đổi mật khẩu
         </h1>
-        <p className="text-slate-500 text-sm mt-2 ml-13">
+        <p className="text-slate-500 text-sm font-medium mt-2 ml-13">
           Tạo mật khẩu mới mạnh mẽ để bảo vệ tài khoản của bạn.
         </p>
       </div>
@@ -152,7 +152,7 @@ const ChangePasswordPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Current Password */}
           <div className="space-y-2">
-            <Label className="text-sm font-bold text-slate-600 dark:text-slate-400 ml-1">
+            <Label className="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
               Mật khẩu hiện tại
             </Label>
             <div className="relative group">
@@ -183,7 +183,7 @@ const ChangePasswordPage = () => {
           {/* New Password */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label className="text-sm font-bold text-slate-600 dark:text-slate-400 ml-1">
+              <Label className="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
                 Mật khẩu mới
               </Label>
               <div className="relative group">
@@ -213,7 +213,7 @@ const ChangePasswordPage = () => {
             {newPassword && (
               <div className="space-y-2 px-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
+                  <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
                     Độ mạnh: {getStrengthLabel()}
                   </span>
                   <div className="flex gap-1">
@@ -241,7 +241,7 @@ const ChangePasswordPage = () => {
 
           {/* Confirm Password */}
           <div className="space-y-2">
-            <Label className="text-sm font-bold text-slate-600 dark:text-slate-400 ml-1">
+            <Label className="text-sm font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 ml-1">
               Xác nhận mật khẩu mới
             </Label>
             <div className="relative group">
@@ -310,7 +310,7 @@ const RequirementMet = ({ met, label }: { met: boolean; label: string }) => (
     ) : (
       <XCircle size={16} weight="bold" className="text-slate-300 dark:text-slate-700" />
     )}
-    <span className={`text-[11px] font-medium ${met ? "text-slate-700 dark:text-slate-200" : "text-slate-400"}`}>
+    <span className={`text-[11px] font-bold ${met ? "text-slate-700 dark:text-slate-200" : "text-slate-400"}`}>
       {label}
     </span>
   </div>

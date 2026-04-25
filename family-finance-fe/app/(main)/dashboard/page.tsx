@@ -107,10 +107,10 @@ export default function DashboardPage() {
       {/* Lời chào trên màn hình Desktop */}
       <div className="hidden md:flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-slate-800 dark:text-white">
+          <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">
             Chào buổi sáng, {mounted && user?.name ? user.name : "Bạn"}!
           </h2>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-500 mt-1 text-sm font-medium">
             Hôm nay tình hình tài chính của gia đình bạn thế nào?
           </p>
         </div>
@@ -136,13 +136,6 @@ export default function DashboardPage() {
             <ArrowDownRight size={18} weight="bold" />
             Thêm Chi
           </button>
-          {/* NÚT QUẢN LÝ DÀNH RIÊNG CHO CHỦ PHÒNG (PARENT) */}
-          {mounted && user?.role === "parent" && (
-            <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-md shadow-emerald-500/20 active:scale-95 ml-2">
-              <Gear size={20} weight="bold" />
-              <span>Quản lý phòng</span>
-            </button>
-          )}
         </div>
       </div>
 
@@ -165,19 +158,43 @@ export default function DashboardPage() {
                       <WarningCircle size={24} weight="duotone" />
                     </div>
                     <div>
-                      <p className="text-red-800 dark:text-red-200 font-semibold">
-                        Cảnh báo ngân sách: {alert.categoryId?.name}
+                      <p className="text-red-800 dark:text-red-200 text-sm font-bold uppercase tracking-widest">
+                        Cảnh báo ngân sách
                       </p>
-                      <p className="text-red-600 dark:text-red-300 text-sm">
-                        Đã chi {formatCurrency(alert.spentAmount)} /{" "}
-                        {formatCurrency(alert.limitAmount)} ({alert.percentage}
-                        %)
+                      <p className="text-red-600 dark:text-red-300 text-base font-black">
+                        {alert.categoryId?.name}
                       </p>
+
+                      {user?.role === "member" ? (
+                        <div className="mt-2 w-full min-w-[200px]">
+                          <div className="flex justify-between text-[10px] font-bold text-red-600 dark:text-red-400 mb-1 tracking-tighter">
+                            <span>TIẾN ĐỘ CHI TIÊU</span>
+                            <span>{alert.percentage}%</span>
+                          </div>
+                          <div className="h-2 w-full bg-red-200 dark:bg-red-900/30 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-red-500 rounded-full transition-all duration-500"
+                              style={{
+                                width: `${Math.min(alert.percentage, 100)}%`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-red-600 dark:text-red-300 text-sm">
+                          Đã chi {formatCurrency(alert.spentAmount)} /{" "}
+                          {formatCurrency(alert.limitAmount)} (
+                          {alert.percentage}
+                          %)
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="hidden md:block">
                     <span className="text-xs font-bold text-red-700 bg-red-200 px-3 py-1 rounded-md">
-                      Vượt mức {alert.threshold}%
+                      {user?.role === "member"
+                        ? `Mức cảnh báo ${alert.threshold}%`
+                        : `Vượt mức ${alert.threshold}%`}
                     </span>
                   </div>
                 </div>
@@ -193,10 +210,10 @@ export default function DashboardPage() {
                 <Wallet size={120} weight="duotone" />
               </div>
               <div>
-                <p className="text-green-100 font-medium text-sm md:text-base">
+                <p className="text-green-100 font-bold text-[11px] uppercase tracking-widest opacity-80 pl-1">
                   Số dư tài sản
                 </p>
-                <h3 className="text-3xl md:text-5xl font-bold mt-2 tracking-tight">
+                <h3 className="text-4xl md:text-6xl font-black mt-2 tracking-tighter">
                   {formatCurrency(data?.totalBalance ?? 0)}
                 </h3>
               </div>
@@ -206,8 +223,8 @@ export default function DashboardPage() {
                   <p className="text-xs text-green-100">
                     Thu nhập tháng {new Date().getMonth() + 1}
                   </p>
-                  <div className="flex items-center gap-1 mt-1 font-semibold text-sm">
-                    <ArrowUpRight size={16} /> +
+                  <div className="flex items-center gap-1 mt-1 font-bold text-sm">
+                    <ArrowUpRight size={16} weight="bold" /> +
                     {formatCurrency(data?.monthIncome ?? 0)}
                   </div>
                 </div>
@@ -233,10 +250,10 @@ export default function DashboardPage() {
                   An tâm
                 </span>
               </div>
-              <p className="text-slate-500 dark:text-slate-400 font-medium text-sm mt-6">
-                Ví chung Gia đình
+              <p className="text-slate-500 dark:text-slate-400 font-bold text-[11px] uppercase tracking-widest mt-6 pl-1">
+                {user?.role === "member" ? "Ví của tôi" : "Ví chung Gia đình"}
               </p>
-              <h3 className="text-3xl font-bold text-slate-800 dark:text-white mt-1">
+              <h3 className="text-3xl font-black text-slate-900 dark:text-white mt-1 tracking-tight">
                 {formatCurrency(data?.totalBalance ?? 0)}
               </h3>
             </div>
@@ -246,7 +263,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-2">
             {/* BIỂU ĐỒ BẰNG RECHARTS */}
             <div className="bg-white dark:bg-[#122017] border border-slate-100 dark:border-slate-800/60 rounded-2xl p-5 shadow-sm">
-              <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-4">
+              <h3 className="font-bold text-xl text-slate-900 dark:text-white mb-4 tracking-tight">
                 Phân bổ chi tiêu (Tháng {new Date().getMonth() + 1})
               </h3>
 
@@ -310,7 +327,7 @@ export default function DashboardPage() {
             {/* LỊCH SỬ GIAO DỊCH (TRANSACTIONS) */}
             <div className="bg-white dark:bg-[#122017] border border-slate-100 dark:border-slate-800/60 rounded-2xl p-5 shadow-sm flex flex-col">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="font-bold text-lg text-slate-800 dark:text-white">
+                <h3 className="font-bold text-xl text-slate-900 dark:text-white tracking-tight">
                   Giao dịch gần đây
                 </h3>
               </div>
@@ -372,114 +389,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* BIỂU ĐỒ XU HƯỚNG 6 THÁNG TỔNG QUAN */}
-          <div className="bg-white dark:bg-[#122017] border border-slate-100 dark:border-slate-800/60 rounded-2xl p-5 shadow-sm mt-6">
-            <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-6">
-              Xu hướng Thu / Chi (6 Tháng gần nhất)
-            </h3>
-            <div className="h-[300px] w-full">
-              {data?.trend?.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart
-                    data={data.trend}
-                    margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
-                  >
-                    <defs>
-                      <linearGradient
-                        id="colorIncome"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#3b82f6"
-                          stopOpacity={0.3}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#3b82f6"
-                          stopOpacity={0}
-                        />
-                      </linearGradient>
-                      <linearGradient
-                        id="colorExpense"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#f43f5e"
-                          stopOpacity={0.3}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#f43f5e"
-                          stopOpacity={0}
-                        />
-                      </linearGradient>
-                    </defs>
-                    <XAxis
-                      dataKey="name"
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 12, fill: "#94a3b8" }}
-                      dy={10}
-                    />
-                    <YAxis
-                      axisLine={false}
-                      tickLine={false}
-                      tick={{ fontSize: 12, fill: "#94a3b8" }}
-                      tickFormatter={(val) => {
-                        if (val >= 1000000)
-                          return `${(val / 1000000).toFixed(1)}M`;
-                        if (val >= 1000) return `${val / 1000}k`;
-                        return String(val);
-                      }}
-                    />
-                    <CartesianGrid
-                      vertical={false}
-                      strokeDasharray="3 3"
-                      stroke="#e2e8f0"
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        borderRadius: "12px",
-                        border: "none",
-                        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                      }}
-                      formatter={(value: number) => formatCurrency(value)}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="income"
-                      name="Thu Nhập"
-                      stroke="#3b82f6"
-                      strokeWidth={3}
-                      fillOpacity={1}
-                      fill="url(#colorIncome)"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="expense"
-                      name="Chi Tiêu"
-                      stroke="#f43f5e"
-                      strokeWidth={3}
-                      fillOpacity={1}
-                      fill="url(#colorExpense)"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex items-center justify-center h-full text-slate-400">
-                  Chưa có đủ dữ liệu để vẽ biểu đồ
-                </div>
-              )}
-            </div>
-          </div>
+
         </>
       )}
 

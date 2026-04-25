@@ -629,3 +629,22 @@ export const getDashboardSummaryAction = async (): Promise<
     };
   }
 };
+// --- AI ---
+export const getAIAdviceAction = async (
+  budgetId: string,
+): Promise<IBackendRes<{ advice: string; data: any }>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/ai/budget-advice/${budgetId}`,
+      method: "GET",
+      token: await getToken(),
+    });
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] getAIAdviceAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi lấy tư vấn AI",
+    };
+  }
+};

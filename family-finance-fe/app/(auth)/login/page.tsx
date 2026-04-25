@@ -71,10 +71,10 @@ const LoginPage = () => {
           </div>
 
           <div className="mb-8 text-center lg:text-left">
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tighter">
               Chào mừng trở lại
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1.5">
+            <p className="text-slate-500 dark:text-slate-400 text-sm font-medium mt-1.5">
               Đăng nhập để quản lý tài chính gia đình
             </p>
           </div>
@@ -137,7 +137,7 @@ const LoginPage = () => {
             Chưa có tài khoản?{" "}
             <Link
               href="/register"
-              className="text-[#22C55E] hover:text-green-600 font-semibold transition-colors"
+              className="text-[#22C55E] hover:text-green-600 font-bold transition-colors"
             >
               Đăng ký ngay
             </Link>
@@ -177,7 +177,7 @@ const LeftHero = () => {
             <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" />
           </svg>
         </div>
-        <span className="text-white text-xl font-bold">Family Finance</span>
+        <span className="text-white text-xl font-bold">Gia Kế</span>
       </div>
 
       {/* Phone mockup */}
@@ -221,7 +221,7 @@ const LeftHero = () => {
           </div>
         </div>
         <div className="text-center">
-          <h2 className="text-white text-2xl font-bold leading-snug">
+          <h2 className="text-white text-3xl font-black leading-tight tracking-tighter">
             Quản lý tài chính
             <br />
             gia đình thông minh

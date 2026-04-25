@@ -17,6 +17,7 @@ import { IncomesModule } from '@/Module/incomes/incomes.module';
 import { ExpensesModule } from '@/Module/expenses/expenses.module';
 import { DashboardModule } from './Module/dashboard/dashboard.module';
 import { NotificationModule } from './Module/notification/notification.module';
+import { AiModule } from './Module/ai/ai.module';
 
 @Module({
   imports: [
@@ -46,7 +47,7 @@ import { NotificationModule } from './Module/notification/notification.module';
           },
         },
         defaults: {
-          from: '"Family Financial Management" <no-reply@localhost>',
+          from: '"Gia Kế" <no-reply@localhost>',
         },
         // preview: true,
         template: {
@@ -66,6 +67,7 @@ import { NotificationModule } from './Module/notification/notification.module';
     ExpensesModule,
     DashboardModule,
     NotificationModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [
