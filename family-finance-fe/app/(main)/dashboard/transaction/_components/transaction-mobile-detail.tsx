@@ -6,6 +6,7 @@ import {
   Sheet,
   SheetContent,
   SheetHeader,
+  SheetTitle,
 } from "@/components/ui/sheet";
 import { 
   ArrowLeft, 
@@ -72,7 +73,7 @@ export function TransactionMobileDetail({
             <button onClick={onClose} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
               <ArrowLeft size={24} className="text-slate-700 dark:text-slate-300" />
             </button>
-            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">Chi tiết giao dịch</h2>
+            <SheetTitle className="text-lg font-bold text-slate-800 dark:text-slate-100 m-0">Chi tiết giao dịch</SheetTitle>
           </div>
           <button 
             onClick={() => {

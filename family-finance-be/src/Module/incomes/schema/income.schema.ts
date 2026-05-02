@@ -23,6 +23,9 @@ export class Incomes {
   @Prop({ required: true })
   description: string;
 
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Tag' }], default: [] })
+  tags: Types.ObjectId[];
+
   createdAt: Date;
   updatedAt: Date;
 }

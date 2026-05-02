@@ -8,6 +8,7 @@ import {
   IsDateString,
   IsOptional,
   MaxLength,
+  IsArray,
 } from 'class-validator';
 import { Types } from 'mongoose';
 
@@ -27,4 +28,9 @@ export class CreateIncomeDto {
   @IsString()
   @MaxLength(200)
   description?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  tags?: string[];
 }

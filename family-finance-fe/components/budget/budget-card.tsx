@@ -23,12 +23,13 @@ interface BudgetCardProps {
 export function BudgetCard({ budget, onEdit, onDelete, isParent }: BudgetCardProps) {
   const [showAiModal, setShowAiModal] = React.useState(false);
   // @ts-ignore - Handle dynamic icons from Phosphor
-  const IconComponent = PhosphorIcons[budget.categoryId.icon] || PhosphorIcons.Star;
+  const IconComponent = PhosphorIcons[budget.categoryId?.icon || ""] || PhosphorIcons.Star;
   
   const percentage = budget.percentage;
   const isOverBudget = percentage > 100;
   
   const formatCurrency = (amount: number) => {
+    if (!amount || amount === 0) return "---";
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
@@ -60,7 +61,7 @@ export function BudgetCard({ budget, onEdit, onDelete, isParent }: BudgetCardPro
           </div>
           <div>
             <h4 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
-              {budget.categoryId.name}
+              {budget.categoryId?.name || 'Không xác định'}
             </h4>
             <span className={cn(
               "text-[11px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider",
@@ -149,7 +150,7 @@ export function BudgetCard({ budget, onEdit, onDelete, isParent }: BudgetCardPro
         open={showAiModal}
         onOpenChange={setShowAiModal}
         budgetId={budget._id}
-        categoryName={budget.categoryId.name}
+        categoryName={budget.categoryId?.name || 'Không xác định'}
       />
 
       {/* Decor */}

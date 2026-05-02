@@ -18,6 +18,7 @@ import { logoutAction, getCategoriesAction } from "@/lib/action";
 import { useAuthStore } from "@/store/auth.store";
 import { useQuery } from "@tanstack/react-query";
 import { AddTransactionModal } from "./transaction/_components/add-transaction-modal";
+import { NotificationBell } from "./_components/notification-bell";
 
 const navItems = [
   { name: "Trang chủ", href: "/dashboard", icon: <House size={24} /> },
@@ -153,11 +154,14 @@ export default function DashboardLayout({
         >
           {/* DROPDOWN MENU - DESKTOP */}
           <div
-            className={`absolute bottom-full left-4 mb-2 w-56 bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-xl shadow-lg z-50 overflow-hidden text-sm transition-all duration-200 origin-bottom-left ${showDropdown ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
+            className={`absolute bottom-full left-4 mb-2 w-72 bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-xl shadow-lg z-50 overflow-hidden text-sm transition-all duration-200 origin-bottom-left ${showDropdown ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
           >
             <div className="p-3 text-slate-500 text-xs font-medium border-b border-slate-100 dark:border-slate-800/60">
               Tài khoản
             </div>
+            
+            <NotificationBell />
+
             <Link
               href="/dashboard/settings"
               className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200 transition-colors"
@@ -175,12 +179,15 @@ export default function DashboardLayout({
             </button>
           </div>
 
-          {/* AVATAR CLICK AREA */}
-          <div
-            className="flex items-center gap-3 cursor-pointer p-2 -m-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors select-none"
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-700 dark:text-green-300 font-bold overflow-hidden border border-slate-200 dark:border-slate-800">
+          {/* ACTIONS ROW: AVATAR */}
+          <div className="flex items-center gap-3">
+            
+            {/* AVATAR CLICK AREA */}
+            <div
+              className="flex flex-1 items-center gap-3 cursor-pointer p-2 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors select-none"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-700 dark:text-green-300 font-bold overflow-hidden border border-slate-200 dark:border-slate-800 relative">
               {user?.avatar ? (
                 <img
                   src={user?.avatar}
@@ -197,6 +204,7 @@ export default function DashboardLayout({
                 {user?.role === "parent" ? "Chủ hộ" : "Thành viên"}
               </div>
             </div>
+          </div>
           </div>
         </div>
       </aside>
@@ -222,42 +230,48 @@ export default function DashboardLayout({
           <span className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">Gia Kế</span>
         </div>
 
-        {/* MOBILE DROPDOWN CONTAINER */}
-        <div className="relative" ref={mobileRef}>
-          <div
-            className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-700 dark:text-green-300 font-bold text-sm cursor-pointer border border-green-200 dark:border-green-800 active:scale-95 transition-transform overflow-hidden"
-            onClick={() => setShowMobileDropdown(!showMobileDropdown)}
-          >
-            {user?.avatar ? (
-              <img
-                src={user.avatar}
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              user?.name?.charAt(0).toUpperCase() || "A"
-            )}
-          </div>
+        {/* ACTIONS ROW: AVATAR ONLY */}
+        <div className="flex items-center gap-4 relative" ref={mobileRef}>
+          
+          {/* MOBILE DROPDOWN CONTAINER */}
+          <div className="relative">
+            <div
+              className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center text-green-700 dark:text-green-300 font-bold text-sm cursor-pointer border border-green-200 dark:border-green-800 active:scale-95 transition-transform overflow-hidden"
+              onClick={() => setShowMobileDropdown(!showMobileDropdown)}
+            >
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                user?.name?.charAt(0).toUpperCase() || "A"
+              )}
+            </div>
 
-          {/* DROPDOWN MENU - MOBILE */}
-          <div
-            className={`absolute top-full right-0 mt-3 w-48 bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-xl shadow-lg z-50 overflow-hidden text-sm transition-all duration-200 origin-top-right ${showMobileDropdown ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
-          >
-            <Link
-              href="/dashboard/settings"
-              className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200 transition-colors"
+            {/* DROPDOWN MENU - MOBILE */}
+            <div
+              className={`absolute top-full right-0 mt-3 w-72 bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-xl shadow-lg z-50 overflow-hidden text-sm transition-all duration-200 origin-top-right ${showMobileDropdown ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
             >
-              <GearSix size={20} />
-              <span>Cài đặt</span>
-            </Link>
-            <div className="h-px bg-slate-100 dark:bg-slate-800/60 w-full" />
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400 w-full text-left transition-colors font-medium"
-            >
-              <SignOut size={20} />
-              <span>Đăng xuất</span>
-            </button>
+              <NotificationBell />
+
+              <Link
+                href="/dashboard/settings"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200 transition-colors"
+              >
+                <GearSix size={20} />
+                <span>Cài đặt</span>
+              </Link>
+              <div className="h-px bg-slate-100 dark:bg-slate-800/60 w-full" />
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-4 py-3 hover:bg-red-50 dark:hover:bg-red-500/10 text-red-600 dark:text-red-400 w-full text-left transition-colors font-medium"
+              >
+                <SignOut size={20} />
+                <span>Đăng xuất</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -276,7 +290,7 @@ export default function DashboardLayout({
       </main>
 
       {/* MOBILE BOTTOM NAV (Chỉ hiện trên Mobile) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-[#122017] border-t border-slate-200 dark:border-slate-800/60 z-20 flex justify-around items-center px-2 pb-safe">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/80 dark:bg-[#122017]/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-slate-800/50 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] dark:shadow-[0_-8px_30px_rgba(0,0,0,0.3)] z-20 flex justify-around items-center px-2 pb-safe">
         {/* Nút bấm Trái (Trang chủ, Giao dịch) */}
         {navItems
           .filter((i) => !i.desktopOnly)
@@ -304,12 +318,14 @@ export default function DashboardLayout({
           })}
 
         {/* Nút bấm ở Giữa: Dấu Cộng Nổi Bật Dùng Để Thêm Nhanh (Add) */}
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center justify-center -mt-8 w-14 h-14 bg-green-500 text-white rounded-full shadow-lg shadow-green-500/30 hover:bg-green-600 transition-transform active:scale-95 z-30"
-        >
-          <Plus size={28} weight="bold" />
-        </button>
+        <div className="relative -mt-8 shrink-0 flex items-center justify-center z-30">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 text-white rounded-full shadow-[0_8px_20px_rgba(34,197,94,0.4)] hover:shadow-[0_8px_25px_rgba(34,197,94,0.5)] hover:-translate-y-1 transition-all duration-300 active:scale-95 ring-4 ring-white dark:ring-[#122017]"
+          >
+            <Plus size={28} weight="bold" />
+          </button>
+        </div>
 
         {/* Nút bấm Phải (Báo cáo, Cài đặt) */}
         {navItems

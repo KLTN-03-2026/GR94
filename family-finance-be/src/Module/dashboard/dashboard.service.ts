@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { Incomes } from '@/Module/incomes/schema/income.schema';
 import { Expenses } from '@/Module/expenses/schema/expense.schema';
 import { Budget } from '@/Module/budget/schema/budget.schema';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class DashboardService {
@@ -13,7 +14,13 @@ export class DashboardService {
     @InjectModel(Budget.name) private readonly budgetModel: Model<Budget>,
   ) {}
 
-  async getSummary(spaceId: string, userId?: string, role?: string) {
+  async getSummary(
+    spaceId: string,
+    userId?: string,
+    role?: string,
+    monthParam?: number,
+    yearParam?: number,
+  ) {
     const spaceObjectId = new Types.ObjectId(spaceId);
 
     // Apply strict filtering so members only see their own numbers
@@ -22,12 +29,20 @@ export class DashboardService {
       additionalMatch.userID = new Types.ObjectId(userId);
     }
 
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1;
+    const now = dayjs();
+    const year = yearParam || now.year();
+    const month = monthParam || now.month() + 1;
 
-    const startOfMonth = new Date(year, month - 1, 1);
-    const endOfMonth = new Date(year, month, 0, 23, 59, 59);
+    const startOfMonth = dayjs()
+      .year(year)
+      .month(month - 1)
+      .startOf('month')
+      .toDate();
+    const endOfMonth = dayjs()
+      .year(year)
+      .month(month - 1)
+      .endOf('month')
+      .toDate();
 
     // 1. Total All-time Incomes & Expenses
     const [allIncomes, allExpenses] = await Promise.all([
@@ -104,17 +119,25 @@ export class DashboardService {
       { $sort: { totalAmount: -1 } },
     ]);
 
-    // 4. Recent Transactions (latest 10 combined)
+    // 4. Recent transactions (filtered by selected month, latest 10)
     const [recentIncomes, recentExpenses] = await Promise.all([
       this.incomesModel
-        .find({ spaceID: spaceObjectId, ...additionalMatch })
+        .find({
+          spaceID: spaceObjectId,
+          date: { $gte: startOfMonth, $lte: endOfMonth },
+          ...additionalMatch,
+        })
         .sort({ date: -1, createdAt: -1 })
         .limit(10)
         .populate('categoryID', 'name icon color')
         .populate('userID', 'name avatar')
         .lean(),
       this.expensesModel
-        .find({ spaceID: spaceObjectId, ...additionalMatch })
+        .find({
+          spaceID: spaceObjectId,
+          date: { $gte: startOfMonth, $lte: endOfMonth },
+          ...additionalMatch,
+        })
         .sort({ date: -1, createdAt: -1 })
         .limit(10)
         .populate('categoryID', 'name icon color')
@@ -133,8 +156,13 @@ export class DashboardService {
     );
     const recentTransactions = combinedRecent.slice(0, 10);
 
-    // 5. 6-Month Trend
-    const trendStart = new Date(year, month - 6, 1);
+    const trendStart = dayjs()
+      .year(year)
+      .month(month - 1)
+      .subtract(5, 'month')
+      .startOf('month')
+      .toDate();
+
     const [trendIncomesRes, trendExpensesRes] = await Promise.all([
       this.incomesModel.aggregate([
         {
@@ -168,12 +196,14 @@ export class DashboardService {
       ]),
     ]);
 
-    const trend: Array<{ name: string; income: number; expense: number }> = [];
+    const trend: any[] = [];
     for (let i = 5; i >= 0; i--) {
-      // Start from the oldest month up to the current month to form chronological order
-      const d = new Date(year, month - 1 - i, 1);
-      const y = d.getFullYear();
-      const m = d.getMonth() + 1;
+      const d = dayjs()
+        .year(year)
+        .month(month - 1)
+        .subtract(i, 'month');
+      const y = d.year();
+      const m = d.month() + 1;
 
       const incMatch = trendIncomesRes.find(
         (x) => x._id.year === y && x._id.month === m,
@@ -231,12 +261,21 @@ export class DashboardService {
     }
 
     return {
+      // New naming for Reports
+      monthlyBalance: monthIncome - monthExpense,
+      monthlyIncome: monthIncome,
+      monthlyExpense: monthExpense,
+      allTimeBalance: totalBalance,
+
+      // Compatibility naming for Dashboard
       totalBalance,
       monthIncome,
       monthExpense,
+
+      // Shared
+      trend,
       categoryAllocation,
       recentTransactions,
-      trend,
       alertBudgets,
     };
   }

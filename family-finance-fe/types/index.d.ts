@@ -34,6 +34,14 @@ export interface IRequest {
   isFormData?: boolean;
 }
 
+// Tag
+export interface ITag {
+  _id: string;
+  name: string;
+  color: string;
+  spaceID: string;
+}
+
 // Income
 export interface IIncome {
   _id: string;
@@ -49,6 +57,7 @@ export interface IIncome {
     color?: string;
     type?: string;
   };
+  tags?: ITag[];
   amount: number;
   date: string;
   description?: string;
@@ -61,6 +70,7 @@ export interface CreateIncomeDto {
   amount: number;
   date: string;
   description?: string;
+  tags?: string[];
 }
 
 export interface GetIncomeDto {

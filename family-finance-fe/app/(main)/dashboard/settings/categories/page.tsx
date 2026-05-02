@@ -17,6 +17,7 @@ import { ICategory } from "@/lib/category.api";
 import { getCategoriesAction, deleteCategoryAction } from "@/lib/action";
 import { CategoryModal } from "@/components/categories/category-modal";
 import { DeleteCategoryModal } from "@/components/categories/delete-category-modal";
+import { CategoryMobileDetail } from "./_components/category-mobile-detail";
 
 // Utility to pick color based on index or string length pseudo-randomly
 const COLORS = [
@@ -55,6 +56,16 @@ export default function CategoriesPage() {
   const [categoryToDelete, setCategoryToDelete] = useState<ICategory | null>(
     null,
   );
+
+  // Mobile detail modal
+  const [isMobileDetailOpen, setIsMobileDetailOpen] = useState(false);
+  const [selectedMobileCategory, setSelectedMobileCategory] =
+    useState<ICategory | null>(null);
+
+  const handleOpenMobileDetail = (cat: ICategory) => {
+    setSelectedMobileCategory(cat);
+    setIsMobileDetailOpen(true);
+  };
 
   // Fetch function
   const fetchCategoriesData = async () => {
@@ -253,7 +264,7 @@ export default function CategoriesPage() {
               return (
                 <div
                   key={cat._id}
-                  onClick={() => handleActionEdit(cat)}
+                  onClick={() => handleOpenMobileDetail(cat)}
                   className="bg-white dark:bg-[#122017] border border-slate-200/60 dark:border-slate-800/60 p-5 rounded-[24px] flex items-center justify-between transition-all hover:bg-slate-50 dark:hover:bg-[#16271c] active:scale-[0.99] shadow-sm cursor-pointer"
                 >
                   <div className="flex items-center gap-5">
@@ -291,21 +302,7 @@ export default function CategoriesPage() {
           </section>
 
           {/* MOBILE Prosperity Progress Placeholder */}
-          <section className="md:hidden px-4 mt-12 mb-8">
-            <div className="bg-slate-100 dark:bg-slate-800/40 p-6 rounded-3xl border border-slate-200/50 dark:border-slate-800/50">
-              <div className="flex justify-between items-end mb-4">
-                <h4 className="font-bold text-slate-900 dark:text-slate-100">
-                  Hạn mức chi tiêu
-                </h4>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-bold">
-                  0% Đã dùng
-                </span>
-              </div>
-              <div className="h-2 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                <div className="h-full bg-slate-300 dark:bg-slate-600 w-0"></div>
-              </div>
-            </div>
-          </section>
+
           {/* --------------------- END MOBILE LAYOUT --------------------- */}
 
           {/* --------------------- DESKTOP LAYOUT (Grid-View) --------------------- */}
@@ -329,22 +326,28 @@ export default function CategoriesPage() {
                     </div>
 
                     {/* Desktop Hover Action Buttons */}
-                    {!cat.isSystem && (
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 translate-x-2 group-hover:translate-x-0 duration-300">
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 duration-300">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleActionEdit(cat);
+                        }}
+                        className="p-2.5 rounded-xl bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
+                      >
+                        <PencilSimple size={20} weight="bold" />
+                      </button>
+                      {!cat.isSystem && (
                         <button
-                          onClick={() => handleActionEdit(cat)}
-                          className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg text-slate-500 dark:text-slate-400 transition-colors"
-                        >
-                          <PencilSimple size={20} weight="bold" />
-                        </button>
-                        <button
-                          onClick={() => handleActionDelete(cat)}
-                          className="p-2 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-lg text-rose-500 transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleActionDelete(cat);
+                          }}
+                          className="p-2.5 rounded-xl bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition-colors"
                         >
                           <Trash size={20} weight="bold" />
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                     {cat.isSystem && (
                       <div className="z-10 mt-2">
                         <span className="text-[11px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-sm font-bold text-slate-500 uppercase tracking-widest">
@@ -361,15 +364,6 @@ export default function CategoriesPage() {
                     <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                       -- giao dịch tháng này
                     </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-100 dark:border-slate-800/80 flex justify-between items-center z-10">
-                    <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">
-                      Ngân sách
-                    </span>
-                    <span className="font-bold text-slate-800 dark:text-slate-200">
-                      Chưa đặt
-                    </span>
                   </div>
                 </div>
               );
@@ -445,6 +439,15 @@ export default function CategoriesPage() {
         onClose={() => setIsDeleteDialogOpen(false)}
         onConfirm={executeDelete}
         categoryName={categoryToDelete?.name ?? ""}
+      />
+
+      {/* Mobile Detail Modal */}
+      <CategoryMobileDetail
+        isOpen={isMobileDetailOpen}
+        onClose={() => setIsMobileDetailOpen(false)}
+        category={selectedMobileCategory}
+        onEdit={(cat) => handleActionEdit(cat)}
+        onDelete={(cat) => handleActionDelete(cat)}
       />
     </div>
   );

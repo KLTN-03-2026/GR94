@@ -22,6 +22,9 @@ export class Expenses extends Document {
 
   @Prop({ default: '' })
   description: string;
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Tag' }], default: [] })
+  tags: Types.ObjectId[];
 }
 
 export const ExpensesSchema = SchemaFactory.createForClass(Expenses);

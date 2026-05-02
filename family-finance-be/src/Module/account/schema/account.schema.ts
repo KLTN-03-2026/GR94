@@ -20,6 +20,9 @@ export class Account {
   @Prop({ default: false })
   is_active: boolean;
 
+  @Prop({ default: false })
+  is_locked: boolean;
+
   @Prop({ default: null, type: String })
   code_verification: string | null;
 

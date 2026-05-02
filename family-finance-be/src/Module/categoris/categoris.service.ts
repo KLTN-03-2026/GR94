@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { CreateCategorisDto } from './dto/create-categoris.dto';
 import { UpdateCategorisDto } from './dto/update-categoris.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -21,7 +21,14 @@ export class CategorisService {
     return sysCategoris;
   }
   // User tạo danh mục của riêng họ
-  async createUserCategoris(dto: CreateCategorisDto, spaceId: string) {
+  async createUserCategoris(
+    dto: CreateCategorisDto,
+    spaceId: string,
+    role: string,
+  ) {
+    if (role !== 'parent') {
+      throw new ForbiddenException('Chỉ quản lý mới được tạo danh mục');
+    }
     const userCategoris = await this.categorisModel.create({
       ...dto,
       spaceId: new Types.ObjectId(spaceId),
@@ -72,7 +79,10 @@ export class CategorisService {
     return removeCategoris;
   }
   // User sửa danh mục của riêng họ
-  async updateUserCategoris(id: string, dto: UpdateCategorisDto) {
+  async updateUserCategoris(id: string, dto: UpdateCategorisDto, role: string) {
+    if (role !== 'parent') {
+      throw new ForbiddenException('Chỉ quản lý mới được sửa danh mục');
+    }
     const updateCategoris = await this.categorisModel.findOneAndUpdate(
       { _id: id, isSystem: false },
       { $set: dto },
@@ -81,7 +91,10 @@ export class CategorisService {
     return updateCategoris;
   }
   // User xóa danh mục của riêng họ
-  async removeUserCategoris(id: string) {
+  async removeUserCategoris(id: string, role: string) {
+    if (role !== 'parent') {
+      throw new ForbiddenException('Chỉ quản lý mới được xóa danh mục');
+    }
     const removeCategoris = await this.categorisModel.findOneAndDelete({
       _id: id,
       isSystem: false,

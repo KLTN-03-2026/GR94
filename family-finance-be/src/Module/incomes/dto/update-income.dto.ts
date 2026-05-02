@@ -8,6 +8,7 @@ import {
   IsString,
   MaxLength,
   Min,
+  IsArray,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 

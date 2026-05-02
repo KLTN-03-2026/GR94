@@ -30,6 +30,12 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       );
     }
 
+    if (profile.is_locked) {
+      throw new BadRequestException(
+        'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
+      );
+    }
+
     return profile; // gắn vào req.user
   }
 }

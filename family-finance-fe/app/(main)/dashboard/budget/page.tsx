@@ -209,35 +209,6 @@ export default function BudgetPage() {
             )}
           </div>
 
-          {/* Prosperity Tips (Matching Stitch Design) */}
-          <section className="bg-slate-50 dark:bg-slate-900/50 p-8 rounded-[2.5rem] border border-slate-100 dark:border-slate-800/50">
-            <div className="flex flex-col md:flex-row gap-8 items-start">
-              <div className="p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-sm space-y-3 flex-1 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 rounded-full flex items-center justify-center text-amber-500">
-                  <PlusCircle size={24} weight="fill" />
-                </div>
-                <h4 className="font-bold text-slate-900 dark:text-slate-100">
-                  Thử thách Gia đình
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Mục tiêu tiết kiệm đang tiến triển rất tốt nhờ sự đóng góp
-                  tích cực từ tất cả thành viên.
-                </p>
-              </div>
-              <div className="p-4 bg-white dark:bg-slate-800 rounded-3xl shadow-sm space-y-3 flex-1 flex flex-col items-center text-center">
-                <div className="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 rounded-full flex items-center justify-center text-blue-500">
-                  <PlusCircle size={24} weight="fill" />
-                </div>
-                <h4 className="font-bold text-slate-900 dark:text-slate-100">
-                  Mẹo tiết kiệm
-                </h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Sử dụng danh sách mua sắm cố định có thể giúp bạn tiết kiệm
-                  thêm 15% mỗi tháng.
-                </p>
-              </div>
-            </div>
-          </section>
         </div>
       )}
 
@@ -255,7 +226,7 @@ export default function BudgetPage() {
         isOpen={!!budgetToDelete}
         onClose={() => setBudgetToDelete(null)}
         onConfirm={confirmDelete}
-        categoryName={budgetToDelete?.categoryId.name || ""}
+        categoryName={budgetToDelete?.categoryId?.name || "Không xác định"}
       />
     </div>
   );

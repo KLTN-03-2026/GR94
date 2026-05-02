@@ -1,10 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
-import { getUsersAdminAction } from "@/lib/action";
+import { getUsersAdminAction, toggleLockUserAction } from "@/lib/action";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Dialog state
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [isToggling, setIsToggling] = useState(false);
 
   useEffect(() => {
     fetchUsers();
@@ -23,6 +38,32 @@ export default function AdminUsersPage() {
       console.error(e);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const openToggleDialog = (user: any) => {
+    setSelectedUser(user);
+    setIsDialogOpen(true);
+  };
+
+  const confirmToggleLock = async () => {
+    if (!selectedUser) return;
+    setIsToggling(true);
+    try {
+      const res = await toggleLockUserAction(selectedUser._id);
+      
+      if (res && (res.error || res.statusCode === 500 || res.statusCode === 400)) {
+        toast.error(res?.message || "Có lỗi xảy ra khi xử lý");
+      } else {
+        toast.success(selectedUser.accountId?.is_locked ? "Đã mở khóa tài khoản thành công" : "Đã khóa tài khoản thành công");
+        fetchUsers();
+        setIsDialogOpen(false);
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error("Có lỗi xảy ra");
+    } finally {
+      setIsToggling(false);
     }
   };
 
@@ -98,9 +139,14 @@ export default function AdminUsersPage() {
                   </td>
                   <td className="px-4 py-4">
                     <div className="flex gap-3">
-                      <button className="text-red-500 hover:text-red-600 text-[11px] font-bold uppercase tracking-widest hover:underline transition-colors">
-                        Khóa TK
-                      </button>
+                      {u.accountId?.sysRole !== "admin" && (
+                        <button 
+                          onClick={() => openToggleDialog(u)}
+                          className={`${u.accountId?.is_locked ? "text-green-500 hover:text-green-600" : "text-red-500 hover:text-red-600"} text-[11px] font-bold uppercase tracking-widest hover:underline transition-colors`}
+                        >
+                          {u.accountId?.is_locked ? "Mở Khóa" : "Khóa TK"}
+                        </button>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -109,6 +155,34 @@ export default function AdminUsersPage() {
           </tbody>
         </table>
       </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-md !rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-xl">
+              {selectedUser?.accountId?.is_locked ? "Xác nhận mở khóa" : "Xác nhận khóa tài khoản"}
+            </DialogTitle>
+            <DialogDescription className="text-base mt-2">
+              {selectedUser?.accountId?.is_locked 
+                ? `Bạn có chắc chắn muốn mở khóa tài khoản của người dùng ${selectedUser?.name}? Họ sẽ có thể đăng nhập lại vào hệ thống bình thường.`
+                : `Bạn có chắc chắn muốn khóa tài khoản của người dùng ${selectedUser?.name}? Họ sẽ bị đăng xuất và không thể đăng nhập cho đến khi được mở khóa.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="mt-6 flex gap-3 sm:justify-end">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isToggling} className="rounded-xl">
+              Hủy
+            </Button>
+            <Button 
+              variant={selectedUser?.accountId?.is_locked ? "default" : "destructive"} 
+              onClick={confirmToggleLock} 
+              disabled={isToggling}
+              className="rounded-xl"
+            >
+              {isToggling ? "Đang xử lý..." : (selectedUser?.accountId?.is_locked ? "Mở khóa ngay" : "Khóa tài khoản")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

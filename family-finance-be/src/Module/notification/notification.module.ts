@@ -4,6 +4,10 @@ import { Notification, NotificationSchema } from './schema/notification.schema';
 import { Space, SpaceSchema } from '@/Module/space/schema/space.schema';
 import { User, UserSchema } from '@/Module/users/schema/user.shcema';
 import { Account, AccountSchema } from '@/Module/account/schema/account.schema';
+import {
+  Expenses,
+  ExpensesSchema,
+} from '@/Module/expenses/schema/expense.schema';
 import { NotificationService } from './notification.service';
 import { NotificationController } from './notification.controller';
 
@@ -14,6 +18,7 @@ import { NotificationController } from './notification.controller';
       { name: Space.name, schema: SpaceSchema },
       { name: User.name, schema: UserSchema },
       { name: Account.name, schema: AccountSchema },
+      { name: Expenses.name, schema: ExpensesSchema },
     ]),
   ],
   controllers: [NotificationController],

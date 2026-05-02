@@ -52,8 +52,9 @@ export class CategorisController {
   createUserCategory(
     @Body() dto: CreateCategorisDto,
     @GetUser('spaceId') spaceId: string,
+    @GetUser('role') role: string,
   ) {
-    return this.categorisService.createUserCategoris(dto, spaceId);
+    return this.categorisService.createUserCategoris(dto, spaceId, role);
   }
 
   @Get()
@@ -62,12 +63,19 @@ export class CategorisController {
   }
 
   @Patch(':id')
-  updateUserCategory(@Param('id') id: string, @Body() dto: UpdateCategorisDto) {
-    return this.categorisService.updateUserCategoris(id, dto);
+  updateUserCategory(
+    @Param('id') id: string, 
+    @Body() dto: UpdateCategorisDto,
+    @GetUser('role') role: string,
+  ) {
+    return this.categorisService.updateUserCategoris(id, dto, role);
   }
 
   @Delete(':id')
-  deleteUserCategory(@Param('id') id: string) {
-    return this.categorisService.removeUserCategoris(id);
+  deleteUserCategory(
+    @Param('id') id: string,
+    @GetUser('role') role: string,
+  ) {
+    return this.categorisService.removeUserCategoris(id, role);
   }
 }

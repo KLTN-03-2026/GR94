@@ -167,6 +167,23 @@ export const getUsersAdminAction = async (): Promise<IBackendRes> => {
   });
 };
 
+// Khóa/Mở khóa người dùng (Admin)
+export const toggleLockUserAction = async (userId: string): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<any>>({
+      url: `${BE}/users/${userId}/lock`,
+      method: "PATCH",
+      token: await getToken(),
+    });
+    return res;
+  } catch (error: any) {
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi khi khóa/mở khóa tài khoản",
+    } as any;
+  }
+};
+
 // Lấy danh mục hệ thống (Admin)
 export const getSystemCategoriesAction = async (): Promise<IBackendRes> => {
   return sendRequestServer<IBackendRes>({
@@ -611,14 +628,16 @@ export const deleteBudgetAction = async (
 };
 
 // --- Dashboard ---
-export const getDashboardSummaryAction = async (): Promise<
-  IBackendRes<any>
-> => {
+export const getDashboardSummaryAction = async (
+  month?: number,
+  year?: number,
+): Promise<IBackendRes<any>> => {
   try {
     const res = await sendRequestServer<any>({
       url: `${BE}/dashboard/summary`,
       method: "GET",
       token: await getToken(),
+      queryParams: { month, year },
     });
     return { statusCode: 200, message: "Success", data: res };
   } catch (error: any) {
@@ -645,6 +664,122 @@ export const getAIAdviceAction = async (
     return {
       statusCode: 500,
       message: error.message || "Lỗi khi lấy tư vấn AI",
+    };
+  }
+};
+
+// --- Tags ---
+export const getTagsAction = async (): Promise<ITag[]> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/tags`,
+      method: "GET",
+      token: await getToken(),
+    });
+    return Array.isArray(res) ? res : (res?.data || []);
+  } catch (error) {
+    console.error("[Action Error] getTagsAction:", error);
+    return [];
+  }
+};
+
+export const createTagAction = async (data: { name: string, color?: string }): Promise<IBackendRes<ITag>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<ITag>>({
+      url: `${BE}/tags`,
+      method: "POST",
+      token: await getToken(),
+      body: data,
+    });
+    return res;
+  } catch (error: any) {
+    return { statusCode: 500, message: error.message || "Lỗi tạo tag" };
+  }
+};
+
+export const updateTagAction = async (id: string, data: { name?: string, color?: string }): Promise<IBackendRes<ITag>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<ITag>>({
+      url: `${BE}/tags/${id}`,
+      method: "PATCH",
+      token: await getToken(),
+      body: data,
+    });
+    return res;
+  } catch (error: any) {
+    return { statusCode: 500, message: error.message || "Lỗi cập nhật tag" };
+  }
+};
+
+export const deleteTagAction = async (id: string): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<IBackendRes<any>>({
+      url: `${BE}/tags/${id}`,
+      method: "DELETE",
+      token: await getToken(),
+    });
+    return res;
+  } catch (error: any) {
+    return { statusCode: 500, message: error.message || "Lỗi xóa tag" };
+  }
+};
+
+// --- Notifications ---
+export const getNotificationsAction = async (
+  page: number = 1,
+  limit: number = 10,
+): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/notification`,
+      method: "GET",
+      token: await getToken(),
+      queryParams: { page, limit },
+    });
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] getNotificationsAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi lấy danh sách thông báo",
+    };
+  }
+};
+
+export const markNotificationAsReadAction = async (
+  id: string,
+): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/notification/${id}/read`,
+      method: "PATCH",
+      token: await getToken(),
+    });
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] markNotificationAsReadAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi đánh dấu đã đọc",
+    };
+  }
+};
+
+export const deleteNotificationAction = async (
+  id: string,
+): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/notification/${id}`,
+      method: "DELETE",
+      token: await getToken(),
+    });
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] deleteNotificationAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi xóa thông báo",
     };
   }
 };

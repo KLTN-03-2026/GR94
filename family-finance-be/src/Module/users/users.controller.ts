@@ -84,4 +84,11 @@ export class UsersController {
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
+
+  // ── Admin khóa/mở khóa tài khoản ──────────────────────
+  @Patch(':id/lock')
+  @UseGuards(AdminGuard)
+  toggleLock(@Param('id') id: string) {
+    return this.usersService.toggleLock(id);
+  }
 }

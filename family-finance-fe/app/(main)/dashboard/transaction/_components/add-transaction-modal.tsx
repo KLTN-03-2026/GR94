@@ -36,10 +36,14 @@ import { CalendarIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { cn } from "@/lib/utils";
-import { createIncomeAction, updateIncomeAction, createExpenseAction, updateExpenseAction } from "@/lib/action";
+import { createIncomeAction, updateIncomeAction, createExpenseAction, updateExpenseAction, getTagsAction } from "@/lib/action";
 import { toast } from "sonner";
 import { ICategory } from "@/lib/category.api";
-import { CreateIncomeDto, ITransaction } from "@/types";
+import { CreateIncomeDto, ITransaction, ITag } from "@/types";
+import { useQuery } from "@tanstack/react-query";
+import { Badge } from "@/components/ui/badge";
+import { Check, Plus } from "@phosphor-icons/react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const formSchema = z.object({
   amount: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
@@ -48,6 +52,7 @@ const formSchema = z.object({
   categoryID: z.string().min(1, "Vui lòng chọn danh mục"),
   date: z.date(),
   description: z.string().optional(),
+  tags: z.array(z.string()).optional(),
 });
 
 interface AddTransactionModalProps {
@@ -75,7 +80,13 @@ export function AddTransactionModal({
       categoryID: "",
       date: new Date(),
       description: "",
+      tags: [],
     },
+  });
+
+  const { data: tags = [] } = useQuery({
+    queryKey: ["tags"],
+    queryFn: () => getTagsAction(),
   });
 
   // Reset form when editData changes
@@ -86,6 +97,7 @@ export function AddTransactionModal({
         categoryID: editData.categoryID._id,
         date: new Date(editData.date),
         description: editData.description || "",
+        tags: editData.tags?.map((t: any) => typeof t === "string" ? t : t._id) || [],
       });
       setType(editData.categoryID.type as "income" | "expense" || propType);
     } else {
@@ -95,6 +107,7 @@ export function AddTransactionModal({
         categoryID: "",
         date: new Date(),
         description: "",
+        tags: [],
       });
     }
   }, [editData, form, propType, open]);
@@ -137,6 +150,7 @@ export function AddTransactionModal({
       categoryID: values.categoryID,
       date: format(values.date, "yyyy-MM-dd"),
       description: values.description,
+      tags: values.tags,
     });
   };
 
@@ -296,7 +310,7 @@ export function AddTransactionModal({
                   <FormControl>
                     <Textarea
                       placeholder="Nội dung giao dịch..."
-                      className="resize-none min-h-[100px] border-slate-100 bg-slate-50 rounded-xl focus-visible:ring-emerald-500/20"
+                      className="resize-none min-h-[80px] border-slate-100 bg-slate-50 rounded-xl focus-visible:ring-emerald-500/20"
                       {...field}
                     />
                   </FormControl>
@@ -304,6 +318,90 @@ export function AddTransactionModal({
                 </FormItem>
               )}
             />
+
+            {/* Tags (Chỉ cho Expense) */}
+            {type === "expense" && (
+              <FormField
+                control={form.control}
+                name="tags"
+                render={({ field }: { field: any }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-600 dark:text-slate-400 font-medium">Tags</FormLabel>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {field.value?.map((tagId: string) => {
+                        const tag = tags.find((t) => t._id === tagId);
+                        if (!tag) return null;
+                        return (
+                          <Badge
+                            key={tagId}
+                            style={{ backgroundColor: tag.color + "20", color: tag.color, borderColor: tag.color + "40" }}
+                            variant="outline"
+                            className="px-2 py-1 flex items-center gap-1 group cursor-pointer"
+                            onClick={() => {
+                              field.onChange(field.value.filter((id: string) => id !== tagId));
+                            }}
+                          >
+                            {tag.name}
+                            <Plus className="w-3 h-3 rotate-45 group-hover:text-rose-500 transition-colors" />
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-9 px-3 border-dashed border-slate-300 dark:border-slate-700 rounded-lg text-slate-500"
+                        >
+                          <Plus className="w-4 h-4 mr-1" />
+                          Thêm tag
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 w-60 rounded-xl overflow-hidden shadow-xl" align="start">
+                        <ScrollArea className="h-48">
+                          <div className="p-2 space-y-1">
+                            {tags.length === 0 && (
+                              <div className="p-4 text-center text-sm text-slate-400">
+                                Chưa có tag nào.
+                              </div>
+                            )}
+                            {tags.map((tag) => {
+                              const isSelected = field.value?.includes(tag._id);
+                              return (
+                                <button
+                                  key={tag._id}
+                                  type="button"
+                                  onClick={() => {
+                                    if (isSelected) {
+                                      field.onChange(field.value.filter((id: string) => id !== tag._id));
+                                    } else {
+                                      field.onChange([...(field.value || []), tag._id]);
+                                    }
+                                  }}
+                                  className={cn(
+                                    "w-full flex items-center gap-2 p-2 rounded-lg text-sm transition-colors text-left",
+                                    isSelected ? "bg-slate-100 dark:bg-slate-800" : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                                  )}
+                                >
+                                  <div 
+                                    className="w-3 h-3 rounded-full" 
+                                    style={{ backgroundColor: tag.color }}
+                                  />
+                                  <span className="flex-1 font-medium">{tag.name}</span>
+                                  {isSelected && <Check className="w-4 h-4 text-emerald-500" />}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </ScrollArea>
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <DialogFooter className="pt-4">
               <Button 

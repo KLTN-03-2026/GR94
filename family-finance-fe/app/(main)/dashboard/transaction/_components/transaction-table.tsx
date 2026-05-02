@@ -94,7 +94,7 @@ export function TransactionTable({
                   </TableCell>
                 </TableRow>
                 {groupedTransactions[dateKey].map((item) => {
-                  const IconComponent = IconMap[item.categoryID.icon?.toLowerCase() || ''] || Question;
+                  const IconComponent = IconMap[item.categoryID?.icon?.toLowerCase() || ''] || Question;
                   return (
                     <TableRow key={`desktop-${item._id}`} className="group transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/20">
                       <TableCell className="text-slate-500 text-sm">
@@ -105,20 +105,37 @@ export function TransactionTable({
                           <div 
                             className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
                             style={{ 
-                              backgroundColor: item.categoryID.color ? `${item.categoryID.color}20` : '#f1f5f9',
-                              color: item.categoryID.color || '#64748b'
+                              backgroundColor: item.categoryID?.color ? `${item.categoryID.color}20` : '#f1f5f9',
+                              color: item.categoryID?.color || '#64748b'
                             }}
                           >
                             <IconComponent weight="duotone" />
                           </div>
                           <div className="flex flex-col">
                             <span className="font-semibold text-slate-800 dark:text-slate-200 leading-tight">
-                              {item.categoryID.name}
+                              {item.categoryID?.name || 'Không xác định'}
                             </span>
                             {item.description && (
                               <span className="text-xs text-slate-400 line-clamp-1">
                                 {item.description}
                               </span>
+                            )}
+                            {item.tags && item.tags.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {item.tags.map((tag: any) => (
+                                  <span 
+                                    key={tag._id} 
+                                    className="px-1.5 py-0.5 rounded text-[9px] font-bold border"
+                                    style={{ 
+                                      backgroundColor: tag.color + "15", 
+                                      color: tag.color,
+                                      borderColor: tag.color + "30"
+                                    }}
+                                  >
+                                    #{tag.name}
+                                  </span>
+                                ))}
+                              </div>
                             )}
                           </div>
                         </div>
@@ -194,7 +211,7 @@ export function TransactionTable({
             </h3>
             <div className="flex flex-col gap-2">
               {groupedTransactions[dateKey].map((item) => {
-                const IconComponent = IconMap[item.categoryID.icon?.toLowerCase() || ''] || Question;
+                const IconComponent = IconMap[item.categoryID?.icon?.toLowerCase() || ''] || Question;
                 return (
                   <div 
                     key={`mobile-row-${item._id}`}
@@ -205,15 +222,15 @@ export function TransactionTable({
                       <div 
                         className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0"
                         style={{ 
-                          backgroundColor: item.categoryID.color ? `${item.categoryID.color}20` : '#f1f5f9',
-                          color: item.categoryID.color || '#64748b'
+                          backgroundColor: item.categoryID?.color ? `${item.categoryID.color}20` : '#f1f5f9',
+                          color: item.categoryID?.color || '#64748b'
                         }}
                       >
                         <IconComponent weight="duotone" />
                       </div>
                       <div className="flex flex-col flex-1 overflow-hidden">
                         <span className="font-bold text-slate-800 dark:text-slate-200 text-sm truncate">
-                          {item.categoryID.name}
+                          {item.categoryID?.name || 'Không xác định'}
                         </span>
                         <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                           <span className="text-xs text-slate-500">
@@ -237,6 +254,23 @@ export function TransactionTable({
                             </>
                           )}
                         </div>
+                        {item.tags && item.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1.5">
+                            {item.tags.map((tag: any) => (
+                              <span 
+                                key={tag._id} 
+                                className="px-1.5 py-0.5 rounded text-[8px] font-bold border"
+                                style={{ 
+                                  backgroundColor: tag.color + "15", 
+                                  color: tag.color,
+                                  borderColor: tag.color + "30"
+                                }}
+                              >
+                                {tag.name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2 pl-2 shrink-0">

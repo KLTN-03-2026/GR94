@@ -27,10 +27,12 @@ export class IncomesService {
       amount: dto.amount,
       date: dto.date,
       description: dto.description,
+      tags: dto.tags?.map((t) => new Types.ObjectId(t)) || [],
     });
     return income.populate([
-      { path: 'categoryID', select: 'name icon' },
+      { path: 'categoryID', select: 'name icon color' },
       { path: 'userID', select: 'name avatar' },
+      { path: 'tags', select: 'name color' },
     ]);
   }
 
@@ -71,6 +73,7 @@ export class IncomesService {
         .find(filter)
         .populate('categoryID', 'name icon color')
         .populate('userID', 'name avatar')
+        .populate('tags', 'name color')
         .sort({ date: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -107,6 +110,7 @@ export class IncomesService {
       .findOne({ _id: id, spaceID: new Types.ObjectId(spaceID) })
       .populate('categoryID', 'name icon color')
       .populate('userID', 'name avatar')
+      .populate('tags', 'name color')
       .lean();
 
     if (!income) throw new NotFoundException('Không tìm thấy khoản thu');
@@ -142,11 +146,15 @@ export class IncomesService {
       updateData.categoryID = new Types.ObjectId(dto.categoryID);
     if (dto.date) updateData.date = new Date(dto.date);
     if (dto.description !== undefined) updateData.description = dto.description;
+    if (dto.tags) {
+      updateData.tags = dto.tags.map((t) => new Types.ObjectId(t));
+    }
 
     return this.incomesModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .populate('categoryID', 'name icon color')
-      .populate('userID', 'name avatar');
+      .populate('userID', 'name avatar')
+      .populate('tags', 'name color');
   }
 
   async deleteIncome(

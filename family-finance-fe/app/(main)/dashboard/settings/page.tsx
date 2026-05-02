@@ -16,6 +16,7 @@ import {
   GearSix,
   UsersThree,
   Copy,
+  Tag as TagIcon,
 } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
@@ -121,31 +122,44 @@ const SettingsPage = () => {
         </section>
 
         {/* Nhóm: Gia đình */}
-        <section>
-          <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-2">
-            Không gian Gia đình
-          </h3>
-          <div className="bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-sm">
-            <div
-              onClick={() => {
-                router.push("/dashboard/settings/categories");
-              }}
-            >
-              <SettingRow
-                icon={<UsersThree size={20} />}
-                title="Quản lý danh mục"
-              />
-            </div>
+        {user?.role === 'parent' && (
+          <section>
+            <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-2">
+              Không gian Gia đình
+            </h3>
+            <div className="bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div
+                onClick={() => {
+                  router.push("/dashboard/settings/categories");
+                }}
+              >
+                <SettingRow
+                  icon={<UsersThree size={20} />}
+                  title="Quản lý danh mục"
+                />
+              </div>
+              <div className="h-px bg-slate-100 dark:bg-slate-800/60 ml-12" />
+              <div
+                onClick={() => {
+                  router.push("/dashboard/settings/tags");
+                }}
+              >
+                <SettingRow
+                  icon={<TagIcon size={20} />}
+                  title="Quản lý Tag"
+                />
+              </div>
 
-            <div className="h-px bg-slate-100 dark:bg-slate-800/60 ml-12" />
-            <div onClick={() => setIsInviteModalOpen(true)}>
-              <SettingRow
-                icon={<ShareNetwork size={20} />}
-                title="Mã mời gia đình"
-              />
+              <div className="h-px bg-slate-100 dark:bg-slate-800/60 ml-12" />
+              <div onClick={() => setIsInviteModalOpen(true)}>
+                <SettingRow
+                  icon={<ShareNetwork size={20} />}
+                  title="Mã mời gia đình"
+                />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Nhóm: Khác */}
         <section>

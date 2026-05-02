@@ -113,10 +113,12 @@ export class ExpensesService {
       amount: dto.amount,
       date: dto.date,
       description: dto.description,
+      tags: dto.tags?.map((tagId) => new Types.ObjectId(tagId)) || [],
     });
     return expenses.populate([
       { path: 'categoryID', select: 'name icon color' },
       { path: 'userID', select: 'name avatar' },
+      { path: 'tags', select: 'name color' },
     ]);
   }
 
@@ -158,6 +160,7 @@ export class ExpensesService {
         .find(filter)
         .populate('categoryID', 'name icon color')
         .populate('userID', 'name avatar')
+        .populate('tags', 'name color')
         .sort({ date: -1, createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -197,6 +200,7 @@ export class ExpensesService {
       })
       .populate('categoryID', 'name icon color')
       .populate('userID', 'name avatar')
+      .populate('tags', 'name color')
       .lean();
 
     if (!expense) throw new NotFoundException('Không tìm thấy khoản chi');
@@ -245,6 +249,9 @@ export class ExpensesService {
       dateToCheck = new Date(dto.date);
     }
     if (dto.description !== undefined) updateData.description = dto.description;
+    if (dto.tags !== undefined) {
+      updateData.tags = dto.tags.map((tagId) => new Types.ObjectId(tagId));
+    }
 
     // Check budget limit before updating
     await this.checkBudgetAndAlert(
@@ -258,7 +265,8 @@ export class ExpensesService {
     return this.expensesModel
       .findByIdAndUpdate(id, updateData, { new: true })
       .populate('categoryID', 'name icon color')
-      .populate('userID', 'name avatar');
+      .populate('userID', 'name avatar')
+      .populate('tags', 'name color');
   }
 
   //DELETE/expenses/:id

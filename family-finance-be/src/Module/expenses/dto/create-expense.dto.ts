@@ -27,4 +27,8 @@ export class CreateExpenseDto {
   @IsString()
   @MaxLength(200)
   description?: string;
+
+  @IsOptional()
+  @IsMongoId({ each: true, message: 'Tag ID không hợp lệ' })
+  tags?: string[];
 }

@@ -18,9 +18,12 @@ import { ExpensesModule } from '@/Module/expenses/expenses.module';
 import { DashboardModule } from './Module/dashboard/dashboard.module';
 import { NotificationModule } from './Module/notification/notification.module';
 import { AiModule } from './Module/ai/ai.module';
+import { TagsModule } from './Module/tags/tags.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     UsersModule,
     BudgetModule,
     SpaceModule,
@@ -68,6 +71,7 @@ import { AiModule } from './Module/ai/ai.module';
     DashboardModule,
     NotificationModule,
     AiModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [

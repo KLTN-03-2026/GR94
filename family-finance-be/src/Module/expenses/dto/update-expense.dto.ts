@@ -23,4 +23,8 @@ export class UpdateExpenseDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsMongoId({ each: true, message: 'Tag ID không hợp lệ' })
+  tags?: string[];
 }

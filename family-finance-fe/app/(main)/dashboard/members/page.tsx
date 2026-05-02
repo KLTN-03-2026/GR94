@@ -181,33 +181,35 @@ export default function MembersPage() {
         </div>
 
         {/* Sidebar - Invite Area */}
-        <div className="space-y-6">
-          <Card className="bg-linear-to-br from-emerald-600 to-emerald-800 text-white border-0 shadow-xl shadow-emerald-900/20 rounded-3xl p-6 relative overflow-hidden">
-            {/* Decoration */}
-            <div className="absolute top-0 right-0 p-8 opacity-10">
-              <UsersThree size={120} weight="duotone" />
-            </div>
-
-            <div className="relative z-10">
-              <h3 className="text-xl font-bold mb-2">Mời thành viên mới</h3>
-              <p className="text-emerald-100/90 text-sm font-medium mb-6 leading-relaxed">
-                Chia sẻ mã mời này với người thân (vợ/chồng hoặc con cái) để họ có thể tham gia vào không gian gia đình của bạn.
-              </p>
-
-              <div className="bg-emerald-950/40 p-4 rounded-2xl border border-emerald-500/30 backdrop-blur-md flex flex-col items-center justify-center text-center gap-3">
-                <span className="text-xs text-emerald-300 font-bold uppercase tracking-widest">Mã chia sẻ</span>
-                <span className="font-mono text-4xl font-bold tracking-widest text-emerald-50">{space.invitedCode}</span>
-                <Button 
-                   onClick={handleCopyCode}
-                   className="mt-2 w-full bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 transition-all font-bold rounded-xl"
-                >
-                  <Copy size={18} className="mr-2" weight="bold" />
-                  Sao chép mã
-                </Button>
+        {isParent && (
+          <div className="space-y-6">
+            <Card className="bg-linear-to-br from-emerald-600 to-emerald-800 text-white border-0 shadow-xl shadow-emerald-900/20 rounded-3xl p-6 relative overflow-hidden">
+              {/* Decoration */}
+              <div className="absolute top-0 right-0 p-8 opacity-10">
+                <UsersThree size={120} weight="duotone" />
               </div>
-            </div>
-          </Card>
-        </div>
+
+              <div className="relative z-10">
+                <h3 className="text-xl font-bold mb-2">Mời thành viên mới</h3>
+                <p className="text-emerald-100/90 text-sm font-medium mb-6 leading-relaxed">
+                  Chia sẻ mã mời này với người thân (vợ/chồng hoặc con cái) để họ có thể tham gia vào không gian gia đình của bạn.
+                </p>
+
+                <div className="bg-emerald-950/40 p-4 rounded-2xl border border-emerald-500/30 backdrop-blur-md flex flex-col items-center justify-center text-center gap-3">
+                  <span className="text-xs text-emerald-300 font-bold uppercase tracking-widest">Mã chia sẻ</span>
+                  <span className="font-mono text-4xl font-bold tracking-widest text-emerald-50">{space.invitedCode}</span>
+                  <Button 
+                     onClick={handleCopyCode}
+                     className="mt-2 w-full bg-white text-emerald-800 hover:bg-emerald-50 active:scale-95 transition-all font-bold rounded-xl"
+                  >
+                    <Copy size={18} className="mr-2" weight="bold" />
+                    Sao chép mã
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          </div>
+        )}
       </div>
 
       <RoleConfirmModal 

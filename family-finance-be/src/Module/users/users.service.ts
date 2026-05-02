@@ -55,6 +55,7 @@ export class UsersService {
       accountId: account._id,
       email: account.email,
       is_active: account.is_active,
+      is_locked: account.is_locked,
       sysRole: account.sysRole,
       // Từ User
       _id: user._id, // userId — dùng làm sub trong JWT
@@ -220,7 +221,7 @@ export class UsersService {
       .find(filter)
       .skip(skip)
       .limit(pageSize)
-      .populate('accountId', 'email is_active createdAt')
+      .populate('accountId', 'email is_active is_locked sysRole createdAt')
       .sort(sort as any)
       .lean();
 
@@ -253,5 +254,29 @@ export class UsersService {
     ]);
 
     return { message: 'Xóa user thành công' };
+  }
+
+  //  Admin khóa/mở khóa tài khoản
+  async toggleLock(userId: string) {
+    if (!mongoose.isValidObjectId(userId)) {
+      throw new BadRequestException('ID không hợp lệ');
+    }
+    const user = await this.userModel.findById(userId).lean();
+    if (!user) throw new BadRequestException('Không tìm thấy user');
+
+    const account = await this.accountModel.findById(user.accountId);
+    if (!account) throw new BadRequestException('Không tìm thấy tài khoản');
+
+    if (account.sysRole === 'admin') {
+      throw new BadRequestException('Không thể khóa tài khoản Admin');
+    }
+
+    const newLockState = !account.is_locked;
+    await this.accountModel.updateOne(
+      { _id: account._id },
+      { is_locked: newLockState }
+    );
+
+    return { message: newLockState ? 'Đã khóa tài khoản' : 'Đã mở khóa tài khoản', is_locked: newLockState };
   }
 }
