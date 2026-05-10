@@ -158,6 +158,33 @@ export const getMySpaceAction = async (): Promise<IBackendRes> => {
   });
 };
 
+//  Lấy danh sách yêu cầu tham gia (Chỉ parent)
+export const getJoinRequestsAction = async (): Promise<IBackendRes> => {
+  return sendRequestServer<IBackendRes>({
+    url: `${BE}/space/requests`,
+    method: "GET",
+    token: await getToken(),
+  });
+};
+
+//  Phê duyệt yêu cầu tham gia
+export const approveJoinRequestAction = async (requestId: string): Promise<IBackendRes> => {
+  return sendRequestServer<IBackendRes>({
+    url: `${BE}/space/requests/${requestId}/approve`,
+    method: "POST",
+    token: await getToken(),
+  });
+};
+
+//  Từ chối yêu cầu tham gia
+export const rejectJoinRequestAction = async (requestId: string): Promise<IBackendRes> => {
+  return sendRequestServer<IBackendRes>({
+    url: `${BE}/space/requests/${requestId}/reject`,
+    method: "POST",
+    token: await getToken(),
+  });
+};
+
 // Lấy danh sách người dùng (Admin)
 export const getUsersAdminAction = async (): Promise<IBackendRes> => {
   return sendRequestServer<IBackendRes>({
@@ -668,8 +695,44 @@ export const getAIAdviceAction = async (
   }
 };
 
+export const processVoiceAction = async (text: string): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/ai/voice`,
+      method: "POST",
+      token: await getToken(),
+      body: { text },
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] processVoiceAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi xử lý giọng nói",
+    };
+  }
+};
+
+export const processVoiceAudioAction = async (audio: string, mimeType: string, categories?: string[]): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/ai/voice-audio`,
+      method: "POST",
+      token: await getToken(),
+      body: { audio, mimeType, categories },
+    });
+    return res;
+  } catch (error: any) {
+    console.error("[Action Error] processVoiceAudioAction:", error);
+    return {
+      statusCode: 500,
+      message: error.message || "Lỗi xử lý giọng nói",
+    };
+  }
+};
+
 // --- Tags ---
-export const getTagsAction = async (): Promise<ITag[]> => {
+export const getTagsAction = async (): Promise<any[]> => {
   try {
     const res = await sendRequestServer<any>({
       url: `${BE}/tags`,
@@ -683,9 +746,9 @@ export const getTagsAction = async (): Promise<ITag[]> => {
   }
 };
 
-export const createTagAction = async (data: { name: string, color?: string }): Promise<IBackendRes<ITag>> => {
+export const createTagAction = async (data: { name: string, color?: string }): Promise<IBackendRes<any>> => {
   try {
-    const res = await sendRequestServer<IBackendRes<ITag>>({
+    const res = await sendRequestServer<IBackendRes<any>>({
       url: `${BE}/tags`,
       method: "POST",
       token: await getToken(),
@@ -697,9 +760,9 @@ export const createTagAction = async (data: { name: string, color?: string }): P
   }
 };
 
-export const updateTagAction = async (id: string, data: { name?: string, color?: string }): Promise<IBackendRes<ITag>> => {
+export const updateTagAction = async (id: string, data: { name?: string, color?: string }): Promise<IBackendRes<any>> => {
   try {
-    const res = await sendRequestServer<IBackendRes<ITag>>({
+    const res = await sendRequestServer<IBackendRes<any>>({
       url: `${BE}/tags/${id}`,
       method: "PATCH",
       token: await getToken(),
@@ -783,3 +846,104 @@ export const deleteNotificationAction = async (
     };
   }
 };
+
+// --- Goals ---
+export const getGoalsAction = async (): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/goals`,
+      method: "GET",
+      token: await getToken(),
+    });
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] getGoalsAction:", error);
+    return { statusCode: 500, message: error.message || "Lỗi lấy danh sách kế hoạch" };
+  }
+};
+
+export const getSurplusAction = async (): Promise<IBackendRes<{ surplus: number }>> => {
+  try {
+    const res = await sendRequestServer<{ surplus: number }>({
+      url: `${BE}/goals/surplus`,
+      method: "GET",
+      token: await getToken(),
+    });
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] getSurplusAction:", error);
+    return { statusCode: 500, message: error.message || "Lỗi lấy số dư" };
+  }
+};
+
+export const createGoalAction = async (data: any): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/goals`,
+      method: "POST",
+      token: await getToken(),
+      body: data,
+    });
+    if (res?.error) {
+      return { statusCode: 400, message: res.message, error: res.error };
+    }
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] createGoalAction:", error);
+    return { statusCode: 500, message: error.message || "Lỗi tạo kế hoạch" };
+  }
+};
+
+export const allocateSurplusAction = async (allocations: any[]): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/goals/allocate`,
+      method: "POST",
+      token: await getToken(),
+      body: { allocations },
+    });
+    if (res?.error) {
+      return { statusCode: 400, message: res.message, error: res.error };
+    }
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] allocateSurplusAction:", error);
+    return { statusCode: 500, message: error.message || "Lỗi phân bổ số dư" };
+  }
+};
+
+export const updateGoalAction = async (id: string, data: any): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/goals/${id}`,
+      method: "PATCH",
+      token: await getToken(),
+      body: data,
+    });
+    if (res?.error) {
+      return { statusCode: 400, message: res.message, error: res.error };
+    }
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] updateGoalAction:", error);
+    return { statusCode: 500, message: error.message || "Lỗi cập nhật kế hoạch" };
+  }
+};
+
+export const deleteGoalAction = async (id: string): Promise<IBackendRes<any>> => {
+  try {
+    const res = await sendRequestServer<any>({
+      url: `${BE}/goals/${id}`,
+      method: "DELETE",
+      token: await getToken(),
+    });
+    if (res?.error) {
+      return { statusCode: 400, message: res.message, error: res.error };
+    }
+    return { statusCode: 200, message: "Success", data: res };
+  } catch (error: any) {
+    console.error("[Action Error] deleteGoalAction:", error);
+    return { statusCode: 500, message: error.message || "Lỗi xóa kế hoạch" };
+  }
+};
+

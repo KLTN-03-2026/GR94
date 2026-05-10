@@ -21,6 +21,10 @@ export class GetExpensesDto {
   userId?: string;
 
   @IsOptional()
+  @IsMongoId()
+  tagId?: string;
+
+  @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(1)

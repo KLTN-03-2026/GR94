@@ -1,5 +1,16 @@
 import queryString from "query-string";
 
+export interface IRequest {
+  url: string;
+  method: string;
+  body?: any;
+  queryParams?: any;
+  useCredentials?: boolean;
+  headers?: any;
+  nextOption?: any;
+  isFormData?: boolean;
+}
+
 //  Helper lấy token từ cookie (client-side) 
 const getTokenFromCookie = (): string | null => {
   if (typeof window === "undefined") return null;
@@ -41,6 +52,7 @@ export const sendRequest = async <T>(props: IRequest): Promise<T> => {
           ? body
           : JSON.stringify(body)
         : undefined,
+    cache: "no-store",
     ...nextOption,
   };
 
@@ -96,6 +108,7 @@ export const sendRequestServer = async <T>(
           ? body
           : JSON.stringify(body)
         : undefined,
+    cache: "no-store",
     ...nextOption,
   };
 

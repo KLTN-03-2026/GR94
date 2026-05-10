@@ -121,6 +121,7 @@ export default function SpaceSetupPage() {
   const [loadJoin, setLoadJoin] = useState(false);
   const [errCreate, setErrCreate] = useState("");
   const [errJoin, setErrJoin] = useState("");
+  const [successJoin, setSuccessJoin] = useState("");
 
   //  Tạo phòng
   // Luồng: gọi API → BE tạo Space + ký JWT mới → FE nhận JWT
@@ -160,6 +161,7 @@ export default function SpaceSetupPage() {
       return;
     }
     setErrJoin("");
+    setSuccessJoin("");
     setLoadJoin(true);
     try {
       const res = await joinSpaceAction(code);
@@ -167,10 +169,18 @@ export default function SpaceSetupPage() {
         setErrJoin(parseMessage(res.message));
         return;
       }
+      
+      // Nếu BE trả về status='pending'
+      if ((res as any)?.data?.status === 'pending' || (Array.isArray(res?.message) ? res?.message[0] : res?.message)?.includes('Yêu cầu')) {
+        setSuccessJoin(parseMessage(res.message) || "Yêu cầu tham gia đã được gửi. Vui lòng chờ chủ hộ phê duyệt.");
+        return;
+      }
 
-      setAuth(res.user!, res.access_token!);
-      router.push("/dashboard");
-      router.refresh();
+      if (res.user && res.access_token) {
+        setAuth(res.user, res.access_token);
+        router.push("/dashboard");
+        router.refresh();
+      }
     } catch {
       setErrJoin("Không thể kết nối server. Thử lại sau.");
     } finally {
@@ -357,6 +367,15 @@ export default function SpaceSetupPage() {
             </div>
 
             <ErrMsg msg={errJoin} />
+            {successJoin && (
+              <div className="flex items-center gap-2 px-4 py-3 bg-[#6bff8f]/10 border border-[#6bff8f]/30 rounded-2xl">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#006a2d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span className="text-[#006a2d] text-sm">{successJoin}</span>
+              </div>
+            )}
 
             <button
               onClick={handleJoin}

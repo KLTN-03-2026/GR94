@@ -154,6 +154,9 @@ export class ExpensesService {
     if (dto.categoryId) {
       filter.categoryID = new Types.ObjectId(dto.categoryId);
     }
+    if (dto.tagId) {
+      filter.tags = new Types.ObjectId(dto.tagId);
+    }
 
     const [result, total, summary] = await Promise.all([
       this.expensesModel

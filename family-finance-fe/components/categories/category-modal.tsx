@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CategoryType } from "@/lib/category.api";
 import { createCategoryAction, updateCategoryAction } from "@/lib/action";
-import * as PhosphorIcons from "@phosphor-icons/react";
+import { IconPicker } from "@/components/ui/icon-picker";
 
 interface CategoryModalProps {
   isOpen: boolean;
@@ -30,12 +30,7 @@ interface CategoryModalProps {
   defaultType?: CategoryType;
 }
 
-// Danh sách các icon gợi ý
-const ICON_OPTIONS = [
-  "ForkKnife", "Car", "House", "ShoppingCart", "Coffee",
-  "ChartLineUp", "TrendUp", "Wallet", "Bank", "Money",
-  "GraduationCap", "FirstAid", "FilmStrip", "Heart", "Star"
-];
+
 
 export function CategoryModal({ isOpen, onClose, onSuccessCallback, editData, defaultType = "expense" }: CategoryModalProps) {
   const isEdit = !!editData;
@@ -139,28 +134,10 @@ export function CategoryModal({ isOpen, onClose, onSuccessCallback, editData, de
           {/* Chọn Icon */}
           <div className="space-y-3">
             <Label className="text-sm font-semibold">Chọn Biểu tượng</Label>
-            <div className="grid grid-cols-5 sm:grid-cols-5 gap-3">
-              {ICON_OPTIONS.map((iconName) => {
-                // Determine icon component
-                // @ts-ignore
-                const IconComponent = PhosphorIcons[iconName] || PhosphorIcons.Star;
-                
-                return (
-                  <button
-                    key={iconName}
-                    type="button"
-                    onClick={() => setIcon(iconName)}
-                    className={`aspect-square flex items-center justify-center rounded-xl border transition-all ${
-                      icon === iconName
-                        ? "bg-green-50 border-green-500 text-green-600 dark:bg-green-500/20 dark:text-green-400"
-                        : "bg-slate-50 border-transparent text-slate-500 hover:bg-slate-100 dark:bg-slate-800/40 dark:text-slate-400 dark:hover:bg-slate-800"
-                    }`}
-                  >
-                    <IconComponent size={24} weight={icon === iconName ? "duotone" : "regular"} />
-                  </button>
-                )
-              })}
-            </div>
+            <IconPicker
+              value={icon}
+              onChange={setIcon}
+            />
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import * as PhosphorIcons from "@phosphor-icons/react";
+import { IconRenderer } from "@/components/ui/icon-renderer";
 import { 
   PencilSimple, 
   Trash, 
@@ -22,8 +22,6 @@ interface BudgetCardProps {
 
 export function BudgetCard({ budget, onEdit, onDelete, isParent }: BudgetCardProps) {
   const [showAiModal, setShowAiModal] = React.useState(false);
-  // @ts-ignore - Handle dynamic icons from Phosphor
-  const IconComponent = PhosphorIcons[budget.categoryId?.icon || ""] || PhosphorIcons.Star;
   
   const percentage = budget.percentage;
   const isOverBudget = percentage > 100;
@@ -57,7 +55,7 @@ export function BudgetCard({ budget, onEdit, onDelete, isParent }: BudgetCardPro
               ? "bg-rose-100 dark:bg-rose-500/20 text-rose-600 dark:text-rose-400" 
               : "bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400"
           )}>
-            <IconComponent size={32} weight="fill" />
+            <IconRenderer icon={budget.categoryId?.icon || ""} size={32} />
           </div>
           <div>
             <h4 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">

@@ -2,10 +2,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 interface AuthState {
-  user: IUser | null;
+  user: any | null;
   token: string | null;
-  setAuth: (user: IUser, token: string) => void;
-  setUser: (user: Partial<IUser>) => void;
+  setAuth: (user: any, token: string) => void;
+  setUser: (user: Partial<any>) => void;
   clear: () => void;
 }
 

@@ -19,8 +19,9 @@ import {
 import { ICategory } from "@/lib/category.api";
 import { IBudget } from "@/types";
 import { toast } from "sonner";
-import * as PhosphorIcons from "@phosphor-icons/react";
+import { Money } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import { IconRenderer } from "@/components/ui/icon-renderer";
 
 interface BudgetModalProps {
   isOpen: boolean;
@@ -132,8 +133,6 @@ export function BudgetModal({
                 <div className="col-span-full py-4 text-center text-slate-400">Không có danh mục chi tiêu</div>
               ) : (
                 categories.map((cat) => {
-                  // @ts-ignore
-                  const Icon = PhosphorIcons[cat.icon] || PhosphorIcons.Star;
                   const isSelected = selectedCategoryId === cat._id;
                   
                   return (
@@ -149,7 +148,7 @@ export function BudgetModal({
                         isEdit && !isSelected && "opacity-30 grayscale"
                       )}
                     >
-                      <Icon size={24} weight={isSelected ? "fill" : "regular"} />
+                      <IconRenderer icon={cat.icon} size={24} />
                       <span className="text-[10px] font-bold truncate w-full px-1">{cat.name}</span>
                     </button>
                   );
@@ -165,7 +164,7 @@ export function BudgetModal({
             </Label>
             <div className="relative group">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-green-600 transition-colors">
-                <PhosphorIcons.Money size={24} weight="bold" />
+                <Money size={24} weight="bold" />
               </div>
               <Input
                 id="amount"

@@ -37,7 +37,7 @@ export function AiAdviceModal({
     queryKey: ["ai-advice", budgetId],
     queryFn: async () => {
       const res = await getAIAdviceAction(budgetId);
-      if (res.statusCode !== 200) throw new Error(res.message);
+      if (res.statusCode !== 200) throw new Error(Array.isArray(res.message) ? res.message[0] : res.message);
       return res.data;
     },
     enabled: open && !!budgetId,

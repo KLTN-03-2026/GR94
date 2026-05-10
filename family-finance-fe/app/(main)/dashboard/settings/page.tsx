@@ -17,6 +17,7 @@ import {
   UsersThree,
   Copy,
   Tag as TagIcon,
+  Target,
 } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
@@ -117,6 +118,25 @@ const SettingsPage = () => {
               }}
             >
               <SettingRow icon={<LockKey size={20} />} title="Đổi mật khẩu" />
+            </div>
+          </div>
+        </section>
+
+        {/* Nhóm: Tài chính */}
+        <section>
+          <h3 className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 px-2">
+            Quản lý Tài chính
+          </h3>
+          <div className="bg-white dark:bg-[#122017] border border-slate-200 dark:border-slate-800/60 rounded-2xl overflow-hidden shadow-sm">
+            <div
+              onClick={() => {
+                router.push("/dashboard/goals");
+              }}
+            >
+              <SettingRow
+                icon={<Target size={20} />}
+                title="Kế hoạch tài chính"
+              />
             </div>
           </div>
         </section>

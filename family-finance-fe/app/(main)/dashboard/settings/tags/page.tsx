@@ -297,7 +297,7 @@ export default function TagsManagementPage() {
         }}
         onSuccessCallback={fetchTags}
         tagData={
-          selectedTag ? { _id: selectedTag._id, name: selectedTag.name } : null
+          selectedTag ? { id: selectedTag._id, name: selectedTag.name } : null
         }
       />
 

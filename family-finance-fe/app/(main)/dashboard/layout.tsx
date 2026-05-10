@@ -12,6 +12,7 @@ import {
   Plus,
   SignOut,
   GearSix,
+  Target,
 } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { logoutAction, getCategoriesAction } from "@/lib/action";
@@ -28,6 +29,12 @@ const navItems = [
     icon: <Receipt size={24} />,
   },
   { name: "Ngân sách", href: "/dashboard/budget", icon: <Wallet size={24} /> },
+  { 
+    name: "Kế hoạch", 
+    href: "/dashboard/goals", 
+    icon: <Target size={24} />,
+    desktopOnly: true,
+  },
   {
     name: "Báo cáo",
     href: "/dashboard/reports",
@@ -51,7 +58,7 @@ export default function DashboardLayout({
   const [showMobileDropdown, setShowMobileDropdown] = useState(false);
   const desktopRef = useRef<HTMLDivElement>(null);
   const mobileRef = useRef<HTMLDivElement>(null);
-  const { user, clearAuth } = useAuthStore();
+  const { user, clear } = useAuthStore();
 
   // Nhanh Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,10 +67,11 @@ export default function DashboardLayout({
     queryKey: ["categories"],
     queryFn: async () => {
       const res = await getCategoriesAction();
-      return res?.data || [];
+      if ('error' in res) return [];
+      return Array.isArray(res) ? res : ((res as any).data || []);
     },
   });
-  const categories = categoriesData?.data || categoriesData || [];
+  const categories = categoriesData || [];
 
   const handleLogout = async () => {
     toast.success("Đang xử lý đăng xuất...", {
@@ -128,7 +136,7 @@ export default function DashboardLayout({
 
         <div className="flex-1 px-4 py-2 space-y-2 overflow-y-auto">
           {navItems
-            .filter((i) => !i.mobileOnly)
+            .filter((i: any) => !i.mobileOnly)
             .map((item) => {
               const active = pathname === item.href;
               return (
@@ -256,6 +264,14 @@ export default function DashboardLayout({
             >
               <NotificationBell />
 
+              <Link
+                href="/dashboard/goals"
+                className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200 transition-colors"
+              >
+                <Target size={20} />
+                <span>Kế hoạch tài chính</span>
+              </Link>
+              <div className="h-px bg-slate-100 dark:bg-slate-800/60 w-full" />
               <Link
                 href="/dashboard/settings"
                 className="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200 transition-colors"

@@ -75,4 +75,31 @@ export class SpaceController {
       role,
     );
   }
+
+  // --- Join Requests ---
+  @Get('requests')
+  getJoinRequests(
+    @GetUser('spaceId') spaceId: string,
+    @GetUser('role') role: string,
+  ) {
+    return this.spaceService.getJoinRequests(spaceId, role);
+  }
+
+  @Post('requests/:id/approve')
+  approveJoinRequest(
+    @Param('id') requestId: string,
+    @GetUser('spaceId') spaceId: string,
+    @GetUser('role') role: string,
+  ) {
+    return this.spaceService.approveJoinRequest(requestId, spaceId, role);
+  }
+
+  @Post('requests/:id/reject')
+  rejectJoinRequest(
+    @Param('id') requestId: string,
+    @GetUser('spaceId') spaceId: string,
+    @GetUser('role') role: string,
+  ) {
+    return this.spaceService.rejectJoinRequest(requestId, spaceId, role);
+  }
 }

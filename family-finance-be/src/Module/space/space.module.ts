@@ -4,14 +4,17 @@ import { SpaceController } from './space.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Space, SpaceSchema } from './schema/space.schema';
 import { User, UserSchema } from '../users/schema/user.shcema';
+import { JoinRequest, JoinRequestSchema } from './schema/join-request.schema';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Space.name, schema: SpaceSchema },
       { name: User.name, schema: UserSchema },
+      { name: JoinRequest.name, schema: JoinRequestSchema },
     ]),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
@@ -25,6 +28,7 @@ import { ConfigService } from '@nestjs/config';
       }),
       inject: [ConfigService],
     }),
+    NotificationModule,
   ],
   controllers: [SpaceController],
   providers: [SpaceService],

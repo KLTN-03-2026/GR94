@@ -12,6 +12,7 @@ import {
   Gear,
   SignOut,
   User,
+  Target,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth.store";
@@ -20,6 +21,7 @@ const menuItems = [
   { icon: House, label: "Tổng quan", href: "/dashboard" },
   { icon: ArrowsLeftRight, label: "Giao dịch", href: "/transaction" },
   { icon: ChartPieSlice, label: "Ngân sách", href: "/budget" },
+  { icon: Target, label: "Kế hoạch", href: "/goals" },
   { icon: Wallet, label: "Tài khoản", href: "/accounts" },
   { icon: ChartBar, label: "Báo cáo", href: "/reports" },
 ];

@@ -61,6 +61,13 @@ interface AddTransactionModalProps {
   categories: any[];
   editData?: ITransaction | null;
   type?: "income" | "expense";
+  initialData?: {
+    amount?: string;
+    description?: string;
+    categoryID?: string;
+    type?: "income" | "expense";
+    date?: Date;
+  } | null;
 }
 
 export function AddTransactionModal({
@@ -69,6 +76,7 @@ export function AddTransactionModal({
   categories,
   editData,
   type: propType = "income",
+  initialData,
 }: AddTransactionModalProps) {
   const [type, setType] = React.useState<"income" | "expense">(propType);
   const queryClient = useQueryClient();
@@ -89,7 +97,7 @@ export function AddTransactionModal({
     queryFn: () => getTagsAction(),
   });
 
-  // Reset form when editData changes
+  // Reset form when editData or initialData changes
   React.useEffect(() => {
     if (editData) {
       form.reset({
@@ -100,6 +108,15 @@ export function AddTransactionModal({
         tags: editData.tags?.map((t: any) => typeof t === "string" ? t : t._id) || [],
       });
       setType(editData.categoryID.type as "income" | "expense" || propType);
+    } else if (initialData) {
+      form.reset({
+        amount: initialData.amount || "",
+        categoryID: initialData.categoryID || "",
+        date: initialData.date || new Date(),
+        description: initialData.description || "",
+        tags: [],
+      });
+      setType(initialData.type || propType);
     } else {
       setType(propType);
       form.reset({
@@ -110,7 +127,7 @@ export function AddTransactionModal({
         tags: [],
       });
     }
-  }, [editData, form, propType, open]);
+  }, [editData, initialData, form, propType, open]);
 
   // Mutation for creating/updating transaction
   const mutation = useMutation({
@@ -232,7 +249,7 @@ export function AddTransactionModal({
                 render={({ field }: { field: any }) => (
                   <FormItem>
                     <FormLabel className="text-slate-600 dark:text-slate-400 font-medium">Danh mục</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="h-12 border-slate-100 bg-slate-50 rounded-xl">
                           <SelectValue placeholder="Chọn danh mục" />

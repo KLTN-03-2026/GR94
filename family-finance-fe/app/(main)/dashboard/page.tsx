@@ -13,9 +13,9 @@ import {
   Gear,
   WarningCircle,
 } from "@phosphor-icons/react";
-import * as PhosphorIcons from "@phosphor-icons/react";
 import { useAuthStore } from "@/store/auth.store";
 import { getDashboardSummaryAction, getCategoriesAction } from "@/lib/action";
+import { IconRenderer } from "@/components/ui/icon-renderer";
 import {
   PieChart,
   Pie,
@@ -349,16 +349,7 @@ export default function DashboardPage() {
                               color: tx.categoryID?.color || "#8b5cf6",
                             }}
                           >
-                            {(() => {
-                              const iconName = tx.categoryID?.icon;
-                              const IconComponent =
-                                iconName && (PhosphorIcons as any)[iconName]
-                                  ? (PhosphorIcons as any)[iconName]
-                                  : PhosphorIcons.Star;
-                              return (
-                                <IconComponent size={24} weight="duotone" />
-                              );
-                            })()}
+                            <IconRenderer icon={tx.categoryID?.icon || "Star"} size={24} weight="duotone" />
                           </div>
                           <div className="overflow-hidden">
                             <p className="font-semibold text-slate-800 dark:text-slate-100 truncate w-32 md:w-auto">

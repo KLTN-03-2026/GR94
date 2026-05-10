@@ -3,7 +3,7 @@ import { ICategory } from "@/lib/category.api";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ArrowLeft, Trash, PencilSimple, Question } from "@phosphor-icons/react";
 import { Button } from "@/components/ui/button";
-import * as PhosphorIcons from "@phosphor-icons/react";
+import { IconRenderer } from "@/components/ui/icon-renderer";
 
 interface CategoryMobileDetailProps {
   category: ICategory | null;
@@ -21,9 +21,6 @@ export function CategoryMobileDetail({
   onDelete,
 }: CategoryMobileDetailProps) {
   if (!category) return null;
-
-  // @ts-ignore
-  const IconComponent = PhosphorIcons[category.icon] || PhosphorIcons.Star;
 
   return (
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -54,7 +51,7 @@ export function CategoryMobileDetail({
 
         <div className="flex flex-col flex-1 overflow-y-auto px-4 py-12 items-center">
           <div className="w-28 h-28 rounded-[2rem] flex items-center justify-center bg-green-100 dark:bg-green-500/20 text-green-600 dark:text-green-400 mb-8 shadow-xl shadow-green-600/10">
-            <IconComponent size={56} weight="duotone" />
+            <IconRenderer icon={category.icon || "Star"} size={56} weight="duotone" />
           </div>
 
           <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-4 text-center">{category.name}</h3>

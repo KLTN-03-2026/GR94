@@ -128,6 +128,22 @@ export class NotificationService {
     );
   }
 
+  async triggerNewJoinRequest(spaceId: string, userName: string) {
+    try {
+      await this.notificationModel.create({
+        spaceId: new Types.ObjectId(spaceId),
+        title: `👋 Yêu cầu tham gia mới`,
+        message: `${userName} muốn tham gia vào gia đình của bạn. Vui lòng kiểm tra tab "Thành viên" để phê duyệt.`,
+        type: NotificationType.INFO,
+        actionLink: '/dashboard/members',
+      });
+    } catch (error) {
+      this.logger.error(
+        'Error triggering new join request alert: ' + error.message,
+      );
+    }
+  }
+
   // Get notifications cho giao diện UI
   async getNotificationsBySpace(spaceId: string, page = 1, limit = 10) {
     const skip = (page - 1) * limit;

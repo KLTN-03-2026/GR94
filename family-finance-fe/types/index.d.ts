@@ -77,6 +77,7 @@ export interface GetIncomeDto {
   month?: number;
   year?: number;
   categoryId?: string;
+  tagId?: string;
   userId?: string;
   page?: number;
   limit?: number;

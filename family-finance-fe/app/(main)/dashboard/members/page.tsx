@@ -2,13 +2,13 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMySpaceAction, changeMemberRoleAction, removeMemberAction } from "@/lib/action";
+import { getMySpaceAction, changeMemberRoleAction, removeMemberAction, getJoinRequestsAction, approveJoinRequestAction, rejectJoinRequestAction } from "@/lib/action";
 import { useAuthStore } from "@/store/auth.store";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Users, User, UserMinus, Shield, UsersThree, Star } from "@phosphor-icons/react";
+import { Copy, Users, User, UserMinus, Shield, UsersThree, Star, CheckCircle, XCircle, Clock } from "@phosphor-icons/react";
 import { RoleConfirmModal } from "./_components/role-confirm-modal";
 import { DeleteMemberConfirmModal } from "./_components/delete-member-confirm-modal";
 
@@ -31,6 +31,21 @@ export default function MembersPage() {
       }
       return res?.data || res || null; 
     },
+  });
+
+  const currentSpaceMember = space?.membersId?.find((m: any) => m._id === user?._id);
+  const isParent = currentSpaceMember?.role === "parent" || currentSpaceMember?.role === "admin" || space?.createdBy?._id === user?._id || user?.role === "parent";
+
+  const { data: joinRequests, isLoading: isLoadingRequests } = useQuery({
+    queryKey: ["joinRequests"],
+    queryFn: async () => {
+      const res = await getJoinRequestsAction();
+      if (res?.error || (res?.statusCode && res.statusCode >= 400)) {
+        return [];
+      }
+      return Array.isArray(res?.data) ? res.data : (Array.isArray(res) ? res : []);
+    },
+    enabled: !!space && isParent,
   });
 
   const roleMutation = useMutation({
@@ -61,6 +76,33 @@ export default function MembersPage() {
     onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
   });
 
+  const approveMutation = useMutation({
+    mutationFn: (id: string) => approveJoinRequestAction(id),
+    onSuccess: (res) => {
+      if (res.error) {
+         toast.error(res.message);
+         return;
+      }
+      toast.success("Đã duyệt yêu cầu tham gia");
+      queryClient.invalidateQueries({ queryKey: ["mySpace"] });
+      queryClient.invalidateQueries({ queryKey: ["joinRequests"] });
+    },
+    onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: (id: string) => rejectJoinRequestAction(id),
+    onSuccess: (res) => {
+      if (res.error) {
+         toast.error(res.message);
+         return;
+      }
+      toast.success("Đã từ chối yêu cầu tham gia");
+      queryClient.invalidateQueries({ queryKey: ["joinRequests"] });
+    },
+    onError: () => toast.error("Có lỗi xảy ra, thử lại sau"),
+  });
+
   const handleCopyCode = () => {
     if (space?.invitedCode) {
       navigator.clipboard.writeText(space.invitedCode);
@@ -85,9 +127,6 @@ export default function MembersPage() {
     );
   }
 
-  const currentSpaceMember = space.membersId?.find((m: any) => m._id === user?._id);
-  const isParent = currentSpaceMember?.role === "parent" || currentSpaceMember?.role === "admin" || space.createdBy?._id === user?._id || user?.role === "parent";
-
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto w-full space-y-8 animate-in fade-in duration-500">
       
@@ -103,8 +142,55 @@ export default function MembersPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Content - Members List */}
+        {/* Main Content - Members List & Requests */}
         <div className="lg:col-span-2 space-y-6">
+          
+          {/* Pending Requests */}
+          {isParent && joinRequests && joinRequests.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+                <Clock size={24} weight="duotone" className="text-amber-500" />
+                Yêu cầu chờ duyệt ({joinRequests.length})
+              </h2>
+              
+              <div className="space-y-4">
+                {joinRequests.map((req: any) => (
+                  <Card key={req._id} className="p-4 md:p-5 flex flex-col sm:flex-row items-center justify-between border-amber-100 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-950/20 rounded-2xl md:rounded-3xl shadow-xs gap-4">
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                      <div className="h-12 w-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 font-bold shrink-0">
+                        {req.userId?.name?.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-800 dark:text-slate-100">{req.userId?.name}</span>
+                        <span className="text-sm text-slate-500">{req.userId?.email}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-amber-100 dark:border-amber-900/50">
+                      <Button 
+                        variant="outline" 
+                        className="flex-1 sm:flex-none border-emerald-200 text-emerald-600 hover:bg-emerald-50 dark:border-emerald-500/30 dark:hover:bg-emerald-500/10 rounded-xl h-10"
+                        disabled={approveMutation.isPending || rejectMutation.isPending}
+                        onClick={() => approveMutation.mutate(req._id)}
+                      >
+                        <CheckCircle size={18} className="mr-2" weight="bold" />
+                        Duyệt
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        className="bg-rose-50 text-rose-600 hover:bg-rose-100 hover:text-rose-700 dark:bg-rose-500/10 dark:hover:bg-rose-500/20 rounded-xl h-10 px-3 shrink-0"
+                        disabled={approveMutation.isPending || rejectMutation.isPending}
+                        onClick={() => rejectMutation.mutate(req._id)}
+                      >
+                        <XCircle size={18} weight="bold" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div>
             <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
               <Users size={24} weight="duotone" className="text-blue-500" />

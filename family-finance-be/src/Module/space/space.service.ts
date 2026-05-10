@@ -9,7 +9,9 @@ import { Model, Types } from 'mongoose';
 import { Space, SpaceDocument } from '@/Module/space/schema/space.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocument } from '@/Module/users/schema/user.shcema';
+import { JoinRequest, JoinRequestDocument } from './schema/join-request.schema';
 import { JwtService } from '@nestjs/jwt';
+import { NotificationService } from '../notification/notification.service';
 interface JwtPayload {
   sub: string;
   accountId: string;
@@ -22,7 +24,10 @@ export class SpaceService {
   constructor(
     @InjectModel(Space.name) private spaceModel: Model<SpaceDocument>,
     @InjectModel(User.name) private userModel: Model<UserDocument>,
+    @InjectModel(JoinRequest.name)
+    private joinRequestModel: Model<JoinRequestDocument>,
     private readonly jwtService: JwtService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   // Sinh ra mã mời ngẫu nhiên có 6 kí tự
@@ -118,7 +123,7 @@ export class SpaceService {
     };
   }
 
-  //Vào phòng bằng mã mờ => role = member
+  // Yêu cầu vào phòng bằng mã mời
   async joinSpace(
     dto: JoinSpaceDto,
     userId: string,
@@ -134,44 +139,135 @@ export class SpaceService {
       invitedCode: dto.invitedCode.toUpperCase(),
     });
     if (!space)
-      throw new BadRequestException('Mã mời không hợp lệ hoặc đã hết hạn');
+      throw new BadRequestException('Mã mời không hợp lệ hoặc không tồn tại');
 
-    // Thêm userId vào memberIds
+    // Kiểm tra xem đã có yêu cầu đang chờ duyệt chưa
+    const existingRequest = await this.joinRequestModel.findOne({
+      userId: new Types.ObjectId(userId),
+      spaceId: space._id,
+      status: 'pending',
+    });
+
+    if (existingRequest) {
+      throw new BadRequestException(
+        'Bạn đã gửi yêu cầu tham gia phòng này và đang chờ duyệt',
+      );
+    }
+
+    // Tạo yêu cầu tham gia
+    await this.joinRequestModel.create({
+      userId: new Types.ObjectId(userId),
+      spaceId: space._id,
+      status: 'pending',
+    });
+
+    await this.notificationService.triggerNewJoinRequest(
+      space._id.toString(),
+      user.name,
+    );
+
+    return {
+      message: 'Yêu cầu tham gia đã được gửi. Vui lòng chờ chủ hộ phê duyệt.',
+      status: 'pending',
+    };
+  }
+
+  // Lấy danh sách yêu cầu tham gia (Chỉ parent)
+  async getJoinRequests(spaceId: string, role: string) {
+    if (role !== 'parent') {
+      throw new ForbiddenException(
+        'Chỉ quản lý mới được xem danh sách yêu cầu',
+      );
+    }
+
+    const requests = await this.joinRequestModel
+      .find({ spaceId: new Types.ObjectId(spaceId), status: 'pending' })
+      .populate('userId', 'name email avatar')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return requests;
+  }
+
+  // Phê duyệt yêu cầu tham gia
+  async approveJoinRequest(requestId: string, spaceId: string, role: string) {
+    if (role !== 'parent') {
+      throw new ForbiddenException('Chỉ quản lý mới được phê duyệt yêu cầu');
+    }
+
+    const request = await this.joinRequestModel.findOne({
+      _id: new Types.ObjectId(requestId),
+      spaceId: new Types.ObjectId(spaceId),
+      status: 'pending',
+    });
+
+    if (!request) {
+      throw new BadRequestException(
+        'Không tìm thấy yêu cầu hoặc yêu cầu đã được xử lý',
+      );
+    }
+
+    const userId = request.userId.toString();
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      request.status = 'rejected';
+      await request.save();
+      throw new BadRequestException('Người dùng không còn tồn tại');
+    }
+
+    if (user.spaceId) {
+      request.status = 'rejected';
+      await request.save();
+      throw new BadRequestException('Người dùng này đã thuộc một phòng khác');
+    }
+
+    // Cập nhật trạng thái request
+    request.status = 'approved';
+    await request.save();
+
+    // Thêm userId vào memberIds của Space
     await this.spaceModel.updateOne(
-      { _id: space._id },
-      { $addToSet: { membersId: new Types.ObjectId(userId) } },
+      { _id: request.spaceId },
+      { $addToSet: { membersId: request.userId } },
     );
 
     // Cập nhật User: spaceId + role = member
     await this.userModel.updateOne(
-      { _id: userId },
-      { spaceId: space._id, role: 'member' },
+      { _id: request.userId },
+      { spaceId: request.spaceId, role: 'member' },
     );
 
-    // Ký JWT mới — có spaceId + role=member
-    const access_token = await this.signNewToken({
-      sub: userId,
-      accountId,
-      username: email,
-      spaceId: space._id.toString(),
-      role: 'member',
-    });
+    return {
+      message: 'Đã phê duyệt yêu cầu tham gia',
+      userId: request.userId,
+    };
+  }
+
+  // Từ chối yêu cầu tham gia
+  async rejectJoinRequest(requestId: string, spaceId: string, role: string) {
+    if (role !== 'parent') {
+      throw new ForbiddenException('Chỉ quản lý mới được từ chối yêu cầu');
+    }
+
+    const request = await this.joinRequestModel.findOneAndUpdate(
+      {
+        _id: new Types.ObjectId(requestId),
+        spaceId: new Types.ObjectId(spaceId),
+        status: 'pending',
+      },
+      { status: 'rejected' },
+      { new: true },
+    );
+
+    if (!request) {
+      throw new BadRequestException(
+        'Không tìm thấy yêu cầu hoặc yêu cầu đã được xử lý',
+      );
+    }
 
     return {
-      _id: space._id,
-      name: space.name,
-      inviteCode: space.invitedCode,
-      role: 'member',
-      access_token, // ← JWT mới trả về luôn
-      user: {
-        _id: userId,
-        name: user.name,
-        email,
-        avatar: user.avatar ?? null,
-        spaceId: space._id.toString(),
-        role: 'member',
-        accountId,
-      },
+      message: 'Đã từ chối yêu cầu tham gia',
     };
   }
 

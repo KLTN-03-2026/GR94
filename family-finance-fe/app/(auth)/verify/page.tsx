@@ -311,4 +311,13 @@ const VerifyPage = () => {
     </div>
   );
 };
-export default VerifyPage;
+import { Suspense } from "react";
+
+const VerifyPageWrapper = () => {
+  return (
+    <Suspense fallback={<div>Đang tải...</div>}>
+      <VerifyPage />
+    </Suspense>
+  );
+};
+export default VerifyPageWrapper;

@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { AiService } from './ai.service';
 import { GetUser } from '@/decorator/get-user.decorator';
 
@@ -12,5 +12,15 @@ export class AiController {
     @GetUser('role') role: string,
   ) {
     return this.aiService.getBudgetAdvice(budgetId, role);
+  }
+
+  @Post('voice')
+  processVoice(@Body() body: { text: string }) {
+    return this.aiService.processVoiceText(body.text);
+  }
+
+  @Post('voice-audio')
+  processVoiceAudio(@Body() body: { audio: string; mimeType: string; categories?: string[] }) {
+    return this.aiService.processVoiceAudio(body.audio, body.mimeType, body.categories);
   }
 }

@@ -11,7 +11,7 @@ import {
   WarningCircle,
   SpinnerGap,
 } from "@phosphor-icons/react";
-import * as PhosphorIcons from "@phosphor-icons/react";
+import { IconRenderer } from "@/components/ui/icon-renderer";
 import { toast } from "sonner";
 import { ICategory } from "@/lib/category.api";
 import { getCategoriesAction, deleteCategoryAction } from "@/lib/action";
@@ -255,9 +255,6 @@ export default function CategoriesPage() {
           {/* --------------------- MOBILE LAYOUT (List-View) --------------------- */}
           <section className="md:hidden px-4 space-y-4">
             {filteredCategories.map((cat, idx) => {
-              // @ts-ignore
-              const IconComponent =
-                PhosphorIcons[cat.icon] || PhosphorIcons.Star;
               const colorIdx = idx % COLORS.length;
               const mobileColor = MOBILE_COLORS[colorIdx];
 
@@ -272,7 +269,7 @@ export default function CategoriesPage() {
                       className={`w-14 h-14 rounded-2xl flex items-center justify-center ${COLORS[colorIdx]}`}
                     >
                       <div className={mobileColor}>
-                        <IconComponent size={32} weight="fill" />
+                        <IconRenderer icon={cat.icon} size={32} />
                       </div>
                     </div>
                     <div>
@@ -308,9 +305,6 @@ export default function CategoriesPage() {
           {/* --------------------- DESKTOP LAYOUT (Grid-View) --------------------- */}
           <section className="hidden md:grid px-8 mt-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredCategories.map((cat, idx) => {
-              // @ts-ignore
-              const IconComponent =
-                PhosphorIcons[cat.icon] || PhosphorIcons.Star;
               const colorIdx = idx % COLORS.length;
 
               return (
@@ -322,7 +316,7 @@ export default function CategoriesPage() {
                     <div
                       className={`w-14 h-14 rounded-2xl flex items-center justify-center ${COLORS[colorIdx]} z-10`}
                     >
-                      <IconComponent size={32} weight="fill" />
+                      <IconRenderer icon={cat.icon} size={32} />
                     </div>
 
                     {/* Desktop Hover Action Buttons */}

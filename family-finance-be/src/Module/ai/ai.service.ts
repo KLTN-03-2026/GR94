@@ -112,4 +112,110 @@ Yêu cầu:
       };
     }
   }
+  async processVoiceText(text: string) {
+    const prompt = `
+Bạn là một trợ lý tài chính cá nhân. Hãy phân tích đoạn văn bản sau và trích xuất thông tin giao dịch tài chính dưới dạng JSON.
+Văn bản cần phân tích: "${text}"
+
+Yêu cầu trả về kết quả là một đối tượng JSON duy nhất với các trường sau:
+{
+  "amount": number, // Số tiền trích xuất được (ví dụ: 50000). Nếu không có số tiền, trả về 0.
+  "type": "income" | "expense", // "income" nếu là khoản thu (lương, thưởng...), "expense" nếu là khoản chi (mua sắm, ăn uống...). Mặc định là "expense".
+  "category": string, // Gợi ý tên danh mục phù hợp (ví dụ: Ăn uống, Di chuyển, Mua sắm, Lương...).
+  "description": string // Mô tả chi tiết về khoản thu chi này.
+}
+
+Chỉ trả về JSON, không thêm bất kỳ văn bản nào khác.
+`;
+
+    try {
+      const result = await this.model.generateContent({
+        contents: prompt,
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
+      });
+      const response = await result.response;
+      return JSON.parse(response.text());
+    } catch (error) {
+      console.error('Gemini API Error:', error);
+      throw error;
+    }
+  }
+
+  async processVoiceAudio(
+    audioBase64: string,
+    mimeType: string,
+    categories: string[] = [],
+  ) {
+    const categoriesStr =
+      categories.length > 0
+        ? `BẮT BUỘC phải chọn 1 trong các danh mục sau nếu khớp: [${categories.join(', ')}]. Nếu không khớp cái nào, hãy dùng từ ngữ mô tả ngắn gọn.`
+        : 'Gợi ý tên danh mục phù hợp (ví dụ: Ăn uống, Di chuyển, Mua sắm, Lương, Giải trí...).';
+
+    const prompt = `
+Bạn là một trợ lý tài chính cá nhân. Hãy nghe đoạn audio này (tiếng Việt) và trích xuất thông tin giao dịch tài chính.
+
+**QUY TRÌNH THỰC HIỆN (BẮT BUỘC):**
+1. Lắng nghe cẩn thận và GHI LẠI nguyên văn (transcription) những gì người dùng nói trong audio.
+2. Từ văn bản đã ghi lại, trích xuất thông tin và trả về một đối tượng JSON.
+
+**HƯỚNG DẪN XỬ LÝ TẠP ÂM:**
+- Hãy tập trung vào giọng nói chính, có âm lượng lớn nhất ở gần micro.
+- Bỏ qua các tiếng ồn nền như tiếng còi xe, tiếng nhạc, tiếng tivi hoặc tiếng người khác nói nhỏ ở phía xa.
+
+**HƯỚNG DẪN TRÍCH XUẤT NGÀY THÁNG:**
+- Nhận diện ngày tháng được nhắc đến (ví dụ: "hôm qua", "hôm nay", "ngày 5", "tháng trước").
+- Quy đổi ngày đó về định dạng YYYY-MM-DD.
+- Nếu người dùng KHÔNG nhắc đến ngày tháng, hãy mặc định trả về ngày hôm nay: "${new Date().toISOString().slice(0, 10)}".
+
+Yêu cầu trả về kết quả là một đối tượng JSON duy nhất theo cấu trúc sau:
+{
+  "transcription": string, // Nguyên văn những gì người dùng nói (ví dụ: "hôm qua đi ăn phở hết 50 nghìn")
+  "data": {
+    "amount": number, // Số tiền trích xuất được (ví dụ: 50000). Nếu không có số tiền, trả về 0.
+    "type": "income" | "expense", // "income" hoặc "expense". Mặc định là "expense".
+    "category": string, // ${categoriesStr}
+    "description": string, // Mô tả chi tiết về khoản thu chi này.
+    "date": string // Ngày giao dịch định dạng YYYY-MM-DD.
+  }
+}
+
+Chỉ trả về JSON theo đúng cấu trúc trên, không thêm bất kỳ văn bản nào khác ngoài JSON.
+`;
+
+    try {
+      const result = await this.model.generateContent({
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              { text: prompt },
+              {
+                inlineData: {
+                  mimeType: mimeType || 'audio/webm',
+                  data: audioBase64,
+                },
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          responseMimeType: 'application/json',
+        },
+      });
+      const response = await result.response;
+      let text = response.text();
+      // Fallback: strip markdown fences if present
+      text = text
+        .replace(/```json\s*/g, '')
+        .replace(/```\s*/g, '')
+        .trim();
+      console.log('[AI] Voice audio response text:', text);
+      return JSON.parse(text);
+    } catch (error) {
+      console.error('Gemini Audio API Error:', error);
+      throw error;
+    }
+  }
 }

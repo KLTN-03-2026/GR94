@@ -20,6 +20,7 @@ import { NotificationModule } from './Module/notification/notification.module';
 import { AiModule } from './Module/ai/ai.module';
 import { TagsModule } from './Module/tags/tags.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { GoalsModule } from './Module/goals/goals.module';
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     NotificationModule,
     AiModule,
     TagsModule,
+    GoalsModule,
   ],
   controllers: [AppController],
   providers: [

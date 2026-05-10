@@ -22,6 +22,6 @@ export const parseMessage = (msg?: string | string[]): string => {
 };
 
 //  Check response có lỗi không 
-export const isError = (res: IBackendRes): boolean => {
+export const isError = (res: any): boolean => {
   return !!(res?.statusCode && res.statusCode >= 400);
 };

@@ -32,7 +32,7 @@ export function DeleteTagModal({ isOpen, onClose, onSuccessCallback, tagData }: 
 
     try {
       setIsPending(true);
-      await deleteTagAction(tagData._id);
+      await deleteTagAction(tagData.id);
       toast.success("Xóa tag thành công!");
       onSuccessCallback();
       onClose();
