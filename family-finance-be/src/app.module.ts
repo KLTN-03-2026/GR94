@@ -43,8 +43,8 @@ import { GoalsModule } from './Module/goals/goals.module';
       useFactory: async (configService: ConfigService) => ({
         transport: {
           host: 'smtp.gmail.com',
-          port: 465,
-          secure: true, // true for 465, false for other ports
+          port: 587,
+          secure: false, // false for 587 (uses STARTTLS)
           family: 4, // Force IPv4 to avoid ENETUNREACH on Render
           auth: {
             user: configService.get<string>('MAIL_USER'),
