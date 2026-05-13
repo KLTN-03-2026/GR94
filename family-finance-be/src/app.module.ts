@@ -22,6 +22,7 @@ import { TagsModule } from './Module/tags/tags.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { GoalsModule } from './Module/goals/goals.module';
 import { createResendTransport } from './mail/resend.transport';
+import { createBrevoTransport } from './mail/brevo.transport';
 
 @Module({
   imports: [
@@ -42,24 +43,38 @@ import { createResendTransport } from './mail/resend.transport';
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
+        const brevoApiKey = configService.get<string>('BREVO_API_KEY');
         const resendApiKey = configService.get<string>('RESEND_API_KEY');
+        const mailUser = configService.get<string>('MAIL_USER') || 'noreply@giake.app';
 
-        // Production: dùng Resend HTTP API (bypass SMTP blocking trên Render)
-        if (resendApiKey) {
+        const templateConfig = {
+          dir: process.cwd() + '/src/mail/templates/',
+          adapter: new HandlebarsAdapter(),
+          options: { strict: true },
+        };
+
+        // Ưu tiên 1: Brevo HTTP API (300 email/ngày, không cần domain)
+        if (brevoApiKey) {
+          console.log('[Mail] Using Brevo HTTP API transport');
           return {
-            transport: createResendTransport(resendApiKey) as any,
-            defaults: {
-              from: '"Gia Kế" <onboarding@resend.dev>',
-            },
-            template: {
-              dir: process.cwd() + '/src/mail/templates/',
-              adapter: new HandlebarsAdapter(),
-              options: { strict: true },
-            },
+            transport: createBrevoTransport(brevoApiKey) as any,
+            defaults: { from: `"Gia Kế" <${mailUser}>` },
+            template: templateConfig,
           };
         }
 
-        // Local dev: dùng Gmail SMTP bình thường
+        // Ưu tiên 2: Resend HTTP API
+        if (resendApiKey) {
+          console.log('[Mail] Using Resend HTTP API transport');
+          return {
+            transport: createResendTransport(resendApiKey) as any,
+            defaults: { from: '"Gia Kế" <onboarding@resend.dev>' },
+            template: templateConfig,
+          };
+        }
+
+        // Fallback: Gmail SMTP (chỉ hoạt động ở localhost)
+        console.log('[Mail] Using Gmail SMTP transport (local only)');
         return {
           transport: {
             host: 'smtp.gmail.com',
@@ -67,18 +82,12 @@ import { createResendTransport } from './mail/resend.transport';
             secure: false,
             family: 4,
             auth: {
-              user: configService.get<string>('MAIL_USER'),
+              user: mailUser,
               pass: configService.get<string>('MAIL_PASS'),
             },
           },
-          defaults: {
-            from: '"Gia Kế" <no-reply@localhost>',
-          },
-          template: {
-            dir: process.cwd() + '/src/mail/templates/',
-            adapter: new HandlebarsAdapter(),
-            options: { strict: true },
-          },
+          defaults: { from: '"Gia Kế" <no-reply@localhost>' },
+          template: templateConfig,
         };
       },
       inject: [ConfigService],

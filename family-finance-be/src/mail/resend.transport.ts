@@ -21,16 +21,14 @@ export function createResendTransport(apiKey: string) {
       if (typeof from === 'string') {
         fromStr = from;
       } else if (from?.address) {
-        fromStr = from.name
-          ? `${from.name} <${from.address}>`
-          : from.address;
+        fromStr = from.name ? `${from.name} <${from.address}>` : from.address;
       } else {
         fromStr = 'Gia Kế <onboarding@resend.dev>';
       }
 
       // Normalize "to" field
-      const toArr: string[] = (Array.isArray(to) ? to : [to]).map(
-        (t: any) => (typeof t === 'string' ? t : t?.address || t),
+      const toArr: string[] = (Array.isArray(to) ? to : [to]).map((t: any) =>
+        typeof t === 'string' ? t : t?.address || t,
       );
 
       resend.emails
