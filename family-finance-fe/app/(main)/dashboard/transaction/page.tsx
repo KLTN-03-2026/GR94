@@ -106,7 +106,7 @@ export default function TransactionPage() {
           // Lấy danh sách TẤT CẢ tên danh mục để gửi cho AI
           const allCategoryNames = categories.map(c => c.name);
           
-          const response = await processVoiceAudioAction(base64, 'audio/webm', allCategoryNames);
+          const response: any = await processVoiceAudioAction(base64, 'audio/webm', allCategoryNames);
           console.log("[Voice] AI response:", response);
           toast.dismiss(toastId);
 
