@@ -21,6 +21,7 @@ import { AiModule } from './Module/ai/ai.module';
 import { TagsModule } from './Module/tags/tags.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { GoalsModule } from './Module/goals/goals.module';
+import { createResendTransport } from './mail/resend.transport';
 
 @Module({
   imports: [
@@ -45,8 +46,6 @@ import { GoalsModule } from './Module/goals/goals.module';
 
         // Production: dùng Resend HTTP API (bypass SMTP blocking trên Render)
         if (resendApiKey) {
-          const { createResendTransport } =
-            await import('./mail/resend.transport');
           return {
             transport: createResendTransport(resendApiKey) as any,
             defaults: {
